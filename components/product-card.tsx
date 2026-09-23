@@ -7,6 +7,7 @@ import { ShoppingBag } from 'lucide-react'
 import { useCart } from '@/lib/cart-context'
 import { useLiveStock } from '@/lib/use-live-stock'
 import { type Product, DEFAULT_SIZE, discountPercent, formatPrice } from '@/lib/products'
+import { trackAddToCart } from '@/lib/tracking'
 
 export function ProductCard({ product, index = 0 }: { product: Product; index?: number }) {
   const { addItem } = useCart()
@@ -27,6 +28,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
       whiteSku: product.whiteSku,
       blackSku: product.blackSku,
     })
+    trackAddToCart(product, 1)
   }
 
   return (

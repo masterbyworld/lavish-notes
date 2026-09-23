@@ -5,9 +5,10 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Minus, Plus, Star, Truck, Clock, PackageCheck } from 'lucide-react'
-import { SIZES, formatPrice, discountPercent, type Product } from '@/lib/products'
+import { formatPrice, discountPercent, type Product } from '@/lib/products'
 import { useCart } from '@/lib/cart-context'
 import { useLiveStock } from '@/lib/use-live-stock'
+import { trackViewItem, trackAddToCart } from '@/lib/tracking'
 
 const GALLERY_ROTATE_MS = 3000
 
@@ -24,7 +25,6 @@ export function ProductDetail({ product }: { product: Product }) {
   const { addItem } = useCart()
   const { isInStock } = useLiveStock()
   const inStock = isInStock(product.whiteSku, product.inStock)
-  const [sizeIdx, setSizeIdx] = useState(1)
   const [qty, setQty] = useState(1)
   const [active, setActive] = useState(0)
   const [delivery, setDelivery] = useState('')
@@ -38,26 +38,31 @@ export function ProductDetail({ product }: { product: Product }) {
     return () => clearInterval(id)
   }, [gallery.length])
 
-  const size = SIZES[sizeIdx]
-  const unitPrice = Math.round(product.price * size.multiplier * 100) / 100
-  const compareAt = Math.round(product.compareAt * size.multiplier * 100) / 100
+  const unitPrice = product.price
+  const compareAt = product.compareAt
   const off = discountPercent(product)
+
+  // GA4 `view_item` (+ Meta ViewContent) once per product view.
+  useEffect(() => {
+    trackViewItem(product)
+  }, [product])
 
   const add = () => {
     if (!inStock) return
     addItem(
       {
-        id: `${product.slug}-${size.ml}`,
+        id: `${product.slug}-${product.sizeLabel}`,
         slug: product.slug,
         name: product.name,
         image: product.image,
-        size: size.label,
+        size: product.sizeLabel,
         price: unitPrice,
         whiteSku: product.whiteSku,
         blackSku: product.blackSku,
       },
       qty,
     )
+    trackAddToCart(product, qty)
   }
 
   return (
@@ -167,21 +172,9 @@ export function ProductDetail({ product }: { product: Product }) {
 
           <div className="mt-7">
             <p className="mb-3 text-sm font-medium text-foreground">Size</p>
-            <div className="grid grid-cols-3 gap-3">
-              {SIZES.map((s, i) => (
-                <button
-                  key={s.ml}
-                  onClick={() => setSizeIdx(i)}
-                  className={`border px-3 py-3 text-center transition-all ${
-                    i === sizeIdx ? 'border-foreground bg-foreground text-background' : 'border-border hover:border-foreground/60'
-                  }`}
-                >
-                  <span className="block text-sm font-semibold">{s.ml}ML</span>
-                  <span className={`block text-xs ${i === sizeIdx ? 'text-background/70' : 'text-muted-foreground'}`}>
-                    {formatPrice(Math.round(product.price * s.multiplier * 100) / 100)}
-                  </span>
-                </button>
-              ))}
+            <div className="inline-flex items-center gap-3 border border-foreground bg-foreground px-6 py-3 text-background">
+              <span className="text-sm font-semibold">{product.sizeLabel}</span>
+              <span className="text-xs text-background/70">{formatPrice(product.price)}</span>
             </div>
           </div>
 
