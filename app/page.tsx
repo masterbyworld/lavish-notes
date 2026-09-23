@@ -1,13 +1,11 @@
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { HeroCarousel } from '@/components/hero-carousel'
-import { ExploreCategories } from '@/components/explore-categories'
 import { UrgencySection } from '@/components/urgency-section'
 import { TotalInventory } from '@/components/total-inventory'
 import { BrandStats } from '@/components/brand-stats'
 import { WinningProducts } from '@/components/winning-products'
 import { BrandSplit } from '@/components/brand-split'
-import { FragranceCollection } from '@/components/fragrance-collection'
 import { CollectionSelector } from '@/components/collection-selector'
 import { VideoRatings } from '@/components/video-ratings'
 import { HappyCustomers } from '@/components/happy-customers'
@@ -20,7 +18,6 @@ export default function HomePage() {
     <main>
       <SiteHeader />
       <HeroCarousel />
-      <ExploreCategories />
       <UrgencySection />
       <TotalInventory />
       <CollectionSelector />
@@ -28,7 +25,6 @@ export default function HomePage() {
       <UrgencySection />
       <WinningProducts />
       <BrandSplit />
-      <FragranceCollection />
       <VideoRatings />
       <section id="reviews">
         <HappyCustomers />
