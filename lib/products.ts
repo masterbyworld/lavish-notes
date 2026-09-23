@@ -27,6 +27,9 @@ export type Product = {
   whiteSku: string
   blackSku: string
   size: string
+  // Clean, display-ready size derived from the raw Shopify variant string via
+  // `normalizeSize` (e.g. "100MLML" -> "100ML", "ParfumML" -> "Parfum").
+  sizeLabel: string
   inStock: boolean
 }
 
@@ -39,6 +42,22 @@ export const SIZES = [
 ] as const
 
 export const DEFAULT_SIZE = '100ML'
+
+// The Shopify variant `size` strings are dirty exports — the unit is doubled
+// ("100MLML"), spaced ("100 MLML"), mis-cased ("100MlML"), or non-numeric
+// ("ParfumML"). Normalize each raw variant into ONE clean size label:
+//   "100MLML" | "100 MLML" | "100MlML" -> "100ML"
+//   "ParfumML"                          -> "Parfum"
+export function normalizeSize(raw: string): string {
+  const s = String(raw || '').trim()
+  if (!s) return DEFAULT_SIZE
+  // A volume like "100ML" (in any dirty form) -> "<number>ML".
+  const volume = s.match(/(\d+)\s*ml/i)
+  if (volume) return `${volume[1]}ML`
+  // A descriptor like "ParfumML" -> strip every "ML" token -> "Parfum".
+  const label = s.replace(/ml/gi, '').replace(/\s+/g, ' ').trim()
+  return label || DEFAULT_SIZE
+}
 
 // ---------------------------------------------------------------------------
 // Derivation helpers — the Shopify backup has no rating/gender/notes, so we
@@ -127,6 +146,7 @@ function toProduct(p: RawProduct): Product {
     whiteSku: p.whiteSku,
     blackSku: p.blackSku,
     size: p.size,
+    sizeLabel: normalizeSize(p.size),
     inStock: p.inStock,
   }
 }

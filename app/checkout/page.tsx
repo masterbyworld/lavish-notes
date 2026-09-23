@@ -8,18 +8,19 @@ import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { useCart } from '@/lib/cart-context'
 import { formatPrice } from '@/lib/products'
+import { trackInitiateCheckout } from '@/lib/tracking'
 
 export default function CheckoutPage() {
-  const { items } = useCart()
+  const { items, rawSubtotal, discount, subtotal, freeCount } = useCart()
   const [redirecting, setRedirecting] = useState(false)
   const [checkoutError, setCheckoutError] = useState<string | null>(null)
-
-  const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0)
 
   async function proceedToShopify() {
     if (items.length === 0 || redirecting) return
     setRedirecting(true)
     setCheckoutError(null)
+    // GA4 begin_checkout (+ Meta InitiateCheckout) on the discounted total.
+    trackInitiateCheckout(items, subtotal)
     try {
       const res = await fetch('/api/shopify-checkout', {
         method: 'POST',
@@ -89,9 +90,24 @@ export default function CheckoutPage() {
               ))}
             </ul>
 
-            <div className="mt-6 flex items-center justify-between border-t border-border pt-3 text-lg font-medium text-foreground">
-              <span>Subtotal</span>
-              <span>{formatPrice(subtotal)}</span>
+            <div className="mt-6 space-y-2 border-t border-border pt-3">
+              {discount > 0 && (
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-medium text-sale">
+                    Buy 2 Get 1 Free{freeCount > 0 ? ` · ${freeCount} free` : ''}
+                  </span>
+                  <span className="font-medium text-sale">−{formatPrice(discount)}</span>
+                </div>
+              )}
+              <div className="flex items-center justify-between text-lg font-medium text-foreground">
+                <span>Subtotal</span>
+                <span className="flex items-baseline gap-2">
+                  {discount > 0 && (
+                    <span className="text-sm text-muted-foreground line-through">{formatPrice(rawSubtotal)}</span>
+                  )}
+                  {formatPrice(subtotal)}
+                </span>
+              </div>
             </div>
 
             {checkoutError && (
