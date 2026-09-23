@@ -13,15 +13,15 @@ const jost = Jost({
 })
 
 export const metadata: Metadata = {
-  title: 'Velvaroma Fragrance — Luxury Designer Inspired Perfumes',
+  title: 'Lavish Notes — Luxury Designer Inspired Perfumes',
   description:
-    'Velvaroma Fragrance offers premium designer-inspired perfumes — Baccarat, Creed, Sospiro, Parfums de Marly and more. Buy 2 Get 1 Free. Free shipping over $80.',
+    'Lavish Notes offers premium designer-inspired perfumes — Baccarat, Creed, Sospiro, Parfums de Marly and more. Buy 2 Get 1 Free. Free shipping over $80.',
   generator: 'v0.app',
 }
 
 export const viewport: Viewport = {
-  colorScheme: 'light',
-  themeColor: '#ffffff',
+  colorScheme: 'dark',
+  themeColor: '#0a0a0a',
 }
 
 export default function RootLayout({

@@ -33,7 +33,7 @@ export function WinningProducts() {
     <section className="bg-foreground py-20 text-background">
       <div className="mx-auto max-w-7xl px-4 md:px-8">
         <div className="flex flex-col items-center text-center">
-          <p className="text-sm uppercase tracking-[0.2em] text-background/60">Best of Velvaroma</p>
+          <p className="text-sm uppercase tracking-[0.2em] text-background/60">Best of Lavish Notes</p>
           <h2 className="mt-3 text-4xl font-medium md:text-5xl">Our Winning Products</h2>
           <p className="mt-4 max-w-xl text-pretty text-background/70">
             The scents our customers reorder the most — proven performers with unbeatable value.

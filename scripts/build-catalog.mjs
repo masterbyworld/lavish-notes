@@ -77,7 +77,7 @@ for (const row of backup) {
       id: handle,
       handle,
       title,
-      brand: route?.brand || 'Velvaroma',
+      brand: route?.brand || 'Lavish Notes',
       routeKey,
       collection: route?.collection || 'Shop With ALL',
       whiteSku,

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { ProductCard } from '@/components/product-card'
 import { products, type Product } from '@/lib/products'
 
-const KEY = 'velvaroma:recently-viewed'
+const KEY = 'lavishnotes:recently-viewed'
 
 export function RecentlyViewed({ currentSlug }: { currentSlug: string }) {
   const [items, setItems] = useState<Product[]>([])

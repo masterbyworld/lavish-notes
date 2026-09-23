@@ -5,12 +5,12 @@ export const dynamic = 'force-dynamic'
 // TEMP diagnostic: proves whether the configured token is a valid Storefront
 // token by running a token-REQUIRED query (products). Delete after debugging.
 export async function GET() {
-  const token = (process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN || '').trim()
-  const domainRaw = (process.env.Velvaroma_Fragrance_Checkout || '').trim()
+  const token = (process.env.NEXT_PUBLIC_LAVISH_Notes_STOREFRONT_ACCESS_TOKEN || '').trim()
+  const domainRaw = (process.env.Lavish_Notes_Checkout || '').trim()
   const host =
     domainRaw.replace(/^https?:\/\//i, '').replace(/\/+$/, '').toLowerCase().endsWith('.myshopify.com')
       ? domainRaw.replace(/^https?:\/\//i, '').replace(/\/+$/, '')
-      : 'velvaroma.myshopify.com'
+      : 'lavish-notes.myshopify.com'
 
   const result: Record<string, unknown> = {
     tokenPresent: !!token,

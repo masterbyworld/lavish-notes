@@ -4,7 +4,7 @@ import { SiteFooter } from '@/components/site-footer'
 import { BrandsView } from '@/components/brands-view'
 
 export const metadata: Metadata = {
-  title: 'Shop With Brand — Velvaroma Fragrance',
+  title: 'Shop With Brand — Lavish Notes',
   description: 'Explore designer-inspired fragrances by house — Creed, Parfums de Marly, Louis Vuitton, Giorgio Armani, Bond No.9 and more.',
 }
 

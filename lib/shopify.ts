@@ -11,16 +11,16 @@ import 'server-only'
 const API_VERSION = '2024-10'
 
 // The Storefront GraphQL API only authenticates on the `*.myshopify.com` host.
-// A public/custom domain (velvaroma.com, shop.velvaroma.com) returns 401
+// A public/custom domain (lavishnotes.com, shop.lavishnotes.com) returns 401
 // UNAUTHORIZED even with a valid token — so we ALWAYS resolve to the myshopify
 // host. The env var is honored only when it already points at a myshopify
 // domain; otherwise we fall back to the known store. (The checkout URL Shopify
 // returns is still on the primary domain, which is correct.)
-const FALLBACK_MYSHOPIFY = 'velvaroma.myshopify.com'
+const FALLBACK_MYSHOPIFY = 'lavish-notes.myshopify.com'
 
 function storeDomain(): string {
   // Read ONLY the exact env var name set in Vercel — no legacy aliases.
-  const raw = (process.env.Velvaroma_Fragrance_Checkout || '')
+  const raw = (process.env.Lavish_Notes_Checkout || '')
     .trim()
     .replace(/^https?:\/\//i, '')
     .replace(/\/+$/, '')
@@ -39,7 +39,7 @@ function storeDomain(): string {
 // before the env var was injected it would be baked in as an empty string.
 // A computed key can't be inlined, forcing a true runtime process.env lookup.
 function storefrontToken(): string {
-  const key = 'NEXT_PUBLIC_' + 'SHOPIFY_STOREFRONT_ACCESS_TOKEN'
+  const key = 'NEXT_PUBLIC_' + 'LAVISH_Notes_STOREFRONT_ACCESS_TOKEN'
   const token = (process.env[key] || '').trim()
   if (!token) throw new Error('Shopify Storefront token is not configured')
   return token
@@ -78,7 +78,7 @@ async function storefront<T>(query: string, variables: Record<string, unknown>):
     const detail = await res.text().catch(() => '')
     const hint =
       res.status === 401
-        ? ' — token/store rejected. Verify NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN and Velvaroma_Fragrance_Checkout.'
+        ? ' — token/store rejected. Verify NEXT_PUBLIC_LAVISH_Notes_STOREFRONT_ACCESS_TOKEN and Lavish_Notes_Checkout.'
         : ''
     lastError = new Error(
       `Shopify request failed (${res.status})${hint}${detail ? ` ${detail.slice(0, 200)}` : ''}`,

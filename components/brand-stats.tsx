@@ -51,10 +51,10 @@ export function BrandStats() {
         <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground">
           The Essence of Original Luxury, Reimagined
         </p>
-        <h2 className="mt-4 text-5xl font-medium tracking-tight text-foreground md:text-6xl">Velvaroma</h2>
+        <h2 className="mt-4 text-5xl font-medium tracking-tight text-foreground md:text-6xl">Lavish Notes</h2>
         <p className="mx-auto mt-6 max-w-2xl text-pretty leading-relaxed text-muted-foreground">
           Discover luxury fragrances at unbeatable prices. From iconic designer scents to rare niche creations,
-          Velvaroma brings you premium perfumes crafted from the finest ingredients. Enjoy exclusive deals, fast
+          Lavish Notes brings you premium perfumes crafted from the finest ingredients. Enjoy exclusive deals, fast
           delivery, and exceptional service.
         </p>
       </motion.div>

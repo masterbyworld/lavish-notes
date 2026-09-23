@@ -14,7 +14,7 @@ export function InstagramSupport() {
       >
         <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground">Response Time 1 to 4 Hours</p>
         <h2 className="mx-auto mt-4 max-w-3xl text-balance text-4xl font-medium text-foreground md:text-5xl">
-          Visit Velvaroma Instagram For Any Support
+          Visit Lavish Notes Instagram For Any Support
         </h2>
         <a
           href="https://instagram.com"
