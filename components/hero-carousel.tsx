@@ -14,22 +14,16 @@ type Slide = {
 
 const slides: Slide[] = [
   {
-    desktop: '/banners/baccarat.png',
-    mobile: '/banners/baccarat-mobile.jpg',
-    href: '/product/baccarat-rouge-540',
-    alt: 'Baccarat Rouge 540 — Pre-order, 70ML and 200ML available',
+    desktop: '/banners/creed-spring-flower.png',
+    mobile: '/banners/creed-spring-flower.png',
+    href: '/shop?c=CR',
+    alt: 'Creed Spring Flower — shop the Creed collection',
   },
   {
-    desktop: '/banners/sospiro.png',
-    mobile: '/banners/sospiro-mobile.jpg',
-    href: '/product/sospiro-vibrato',
-    alt: 'Sospiro Discovery Set — Vibrato, Dolce Melodia, Maraschino',
-  },
-  {
-    desktop: '/banners/creed.png',
-    mobile: '/banners/creed-mobile.jpg',
-    href: '/product/wild-vetiver',
-    alt: 'New Creed Wild Vetiver decant — shop now',
+    desktop: '/banners/mfk-baccarat-apom.png',
+    mobile: '/banners/mfk-baccarat-apom.png',
+    href: '/shop?c=MF',
+    alt: 'Maison Francis Kurkdjian — Baccarat Rouge 540 & APOM',
   },
 ]
 
