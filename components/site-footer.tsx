@@ -64,8 +64,17 @@ export function SiteFooter() {
         <div className="grid gap-x-10 gap-y-2 md:grid-cols-[1.5fr_1.3fr_1fr_1fr] md:gap-y-0">
           {/* Brand */}
           <FooterSection title="Define Your Scent By Lavish Notes" k="Brand" open={open} toggle={toggle}>
-            <span className="mt-2 block text-2xl font-semibold uppercase tracking-[0.28em] text-foreground">
-              Lavish<span className="text-muted-foreground"> Notes</span>
+            <span className="mt-2 flex items-center gap-3">
+              <Image
+                src="/lavish-notes-logo.png"
+                alt="Lavish Notes"
+                width={48}
+                height={48}
+                className="h-12 w-12 object-contain"
+              />
+              <span className="font-display text-2xl font-semibold uppercase tracking-[0.28em] text-foreground">
+                Lavish<span className="text-muted-foreground"> Notes</span>
+              </span>
             </span>
             <p className="mt-5 max-w-xs text-sm leading-relaxed text-muted-foreground">
               Premium ingredients, identical scent profiles, and exceptional lasting power — all priced to fit your everyday budget. Your signature scent shouldn&apos;t cost a fortune.
