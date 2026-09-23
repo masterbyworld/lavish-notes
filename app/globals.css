@@ -26,7 +26,7 @@
   --color-sale: var(--sale);
 
   --font-sans: var(--font-jost), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-jost), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-cormorant), ui-serif, Georgia, 'Times New Roman', serif;
 
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
@@ -79,7 +79,10 @@
     @apply bg-background text-foreground font-sans;
   }
   h1, h2, h3, h4 {
-    @apply font-sans tracking-tight;
+    @apply font-serif tracking-tight;
+  }
+  .font-display {
+    font-family: var(--font-serif);
   }
 }
 

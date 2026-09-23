@@ -49,6 +49,7 @@ export function ShopView({
   const searchMode = query.length > 0
 
   const [sort, setSort] = useState<string>('featured')
+  const [showSoldOut, setShowSoldOut] = useState(false)
   const [term, setTerm] = useState<string>(query)
   const [switchOpen, setSwitchOpen] = useState(false)
   const switchRef = useRef<HTMLDivElement>(null)
@@ -98,6 +99,14 @@ export function ShopView({
     return list
   }, [sort, collection, searchMode, matches])
 
+  // Sold-out scents are hidden by default; the shopper opts in via the toggle.
+  const soldOutCount = useMemo(() => filtered.filter((p) => !p.inStock).length, [filtered])
+  const inStockCount = filtered.length - soldOutCount
+  const visible = useMemo(
+    () => (showSoldOut ? filtered : filtered.filter((p) => p.inStock)),
+    [filtered, showSoldOut],
+  )
+
   // Close the collection switcher when clicking outside or pressing Escape.
   useEffect(() => {
     if (!switchOpen) return
@@ -132,7 +141,7 @@ export function ShopView({
       <div className="mb-8 text-center">
         <h1 className="text-4xl font-medium text-foreground md:text-5xl">
           {searchMode
-            ? `Found ${filtered.length} result${filtered.length === 1 ? '' : 's'} for "${query}"`
+            ? `Found ${visible.length} result${visible.length === 1 ? '' : 's'} for "${query}"`
             : collection
               ? collection.displayName
               : 'Shop All Fragrances'}
@@ -155,7 +164,7 @@ export function ShopView({
           </form>
         ) : (
           <p className="mt-3 text-sm text-muted-foreground">
-            {filtered.length} designer-inspired scent{filtered.length === 1 ? '' : 's'} · Buy 2 Get 1 Free
+            {inStockCount} designer-inspired scent{inStockCount === 1 ? '' : 's'} available · Buy 2 Get 1 Free
           </p>
         )}
       </div>
@@ -235,7 +244,28 @@ export function ShopView({
         </div>
       )}
 
-      <div className="mb-10 flex flex-col gap-4 border-y border-border py-4 md:flex-row md:items-center md:justify-end">
+      <div className="mb-10 flex flex-col gap-4 border-y border-border py-4 md:flex-row md:items-center md:justify-between">
+        <button
+          type="button"
+          role="switch"
+          aria-checked={showSoldOut}
+          onClick={() => setShowSoldOut((v) => !v)}
+          disabled={soldOutCount === 0}
+          className="flex items-center gap-3 text-sm font-semibold uppercase tracking-wide text-foreground disabled:opacity-40"
+        >
+          <span
+            className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${
+              showSoldOut ? 'bg-primary' : 'bg-muted'
+            }`}
+          >
+            <span
+              className={`inline-block h-5 w-5 transform rounded-full bg-background shadow transition-transform ${
+                showSoldOut ? 'translate-x-5' : 'translate-x-0.5'
+              }`}
+            />
+          </span>
+          Show Sold Out ({soldOutCount})
+        </button>
         <div className="flex flex-wrap items-center gap-3">
           <select
             value={sort}
@@ -250,7 +280,7 @@ export function ShopView({
         </div>
       </div>
 
-      {filtered.length === 0 ? (
+      {visible.length === 0 ? (
         <p className="py-20 text-center text-muted-foreground">
           {searchMode
             ? `No exact matches for "${query}". Explore the picks below that shoppers love.`
@@ -258,7 +288,7 @@ export function ShopView({
         </p>
       ) : (
         <div className="grid grid-cols-2 gap-x-5 gap-y-10 md:grid-cols-3 lg:grid-cols-4">
-          {filtered.map((p, i) => (
+          {visible.map((p, i) => (
             <ProductCard key={p.slug} product={p} index={i} />
           ))}
         </div>

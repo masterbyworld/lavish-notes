@@ -5,7 +5,6 @@ import { ExploreCategories } from '@/components/explore-categories'
 import { UrgencySection } from '@/components/urgency-section'
 import { TotalInventory } from '@/components/total-inventory'
 import { BrandStats } from '@/components/brand-stats'
-import { TopWanted } from '@/components/top-wanted'
 import { WinningProducts } from '@/components/winning-products'
 import { BrandSplit } from '@/components/brand-split'
 import { FragranceCollection } from '@/components/fragrance-collection'
@@ -26,7 +25,6 @@ export default function HomePage() {
       <TotalInventory />
       <CollectionSelector />
       <BrandStats />
-      <TopWanted />
       <UrgencySection />
       <WinningProducts />
       <BrandSplit />

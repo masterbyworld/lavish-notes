@@ -71,8 +71,16 @@ export function SiteHeader() {
             <Menu className="h-6 w-6" />
           </button>
 
-          <Link href="/" className="flex shrink-0 items-center lg:flex-none" aria-label="Lavish Notes home">
-            <span className="text-2xl font-semibold uppercase tracking-[0.28em] text-foreground md:text-[1.7rem]">
+          <Link href="/" className="flex shrink-0 items-center gap-3 lg:flex-none" aria-label="Lavish Notes home">
+            <Image
+              src="/lavish-notes-logo.png"
+              alt="Lavish Notes"
+              width={52}
+              height={52}
+              priority
+              className="h-11 w-11 object-contain md:h-12 md:w-12"
+            />
+            <span className="hidden font-display text-2xl font-semibold uppercase tracking-[0.32em] text-foreground sm:block md:text-[1.7rem]">
               Lavish<span className="text-muted-foreground"> Notes</span>
             </span>
           </Link>
@@ -137,8 +145,17 @@ export function SiteHeader() {
               className="fixed inset-y-0 left-0 z-50 flex w-72 flex-col gap-1 bg-background p-6 lg:hidden"
             >
               <div className="mb-6 flex items-center justify-between">
-                <span className="text-lg font-semibold uppercase tracking-[0.24em] text-foreground">
-                  Lavish<span className="text-muted-foreground"> Notes</span>
+                <span className="flex items-center gap-2">
+                  <Image
+                    src="/lavish-notes-logo.png"
+                    alt="Lavish Notes"
+                    width={36}
+                    height={36}
+                    className="h-9 w-9 object-contain"
+                  />
+                  <span className="font-display text-lg font-semibold uppercase tracking-[0.24em] text-foreground">
+                    Lavish<span className="text-muted-foreground"> Notes</span>
+                  </span>
                 </span>
                 <button onClick={() => setMobileOpen(false)} aria-label="Close menu">
                   <X className="h-6 w-6" />
