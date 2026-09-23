@@ -45,9 +45,9 @@ export function SiteHeader() {
       <div className="hidden border-b border-border bg-background md:block">
         <div className="mx-auto flex h-11 max-w-7xl items-center justify-between px-4 text-sm text-foreground md:px-8">
           <div className="flex items-center gap-5">
-            <a href="mailto:Support@velvaroma.com" className="flex items-center gap-2 hover:text-muted-foreground">
+            <a href="mailto:Support@lavishnotes.com" className="flex items-center gap-2 hover:text-muted-foreground">
               <Mail className="h-4 w-4" />
-              Support@velvaroma.com
+              Support@lavishnotes.com
             </a>
             <a href="#" aria-label="Instagram" className="hover:text-muted-foreground">
               <AtSign className="h-4 w-4" />
@@ -71,8 +71,10 @@ export function SiteHeader() {
             <Menu className="h-6 w-6" />
           </button>
 
-          <Link href="/" className="flex shrink-0 items-center lg:flex-none" aria-label="Velvaroma home">
-            <Image src="/logo.png" alt="Velvaroma Fragrance" width={150} height={72} className="h-14 w-auto" priority />
+          <Link href="/" className="flex shrink-0 items-center lg:flex-none" aria-label="Lavish Notes home">
+            <span className="text-2xl font-semibold uppercase tracking-[0.28em] text-foreground md:text-[1.7rem]">
+              Lavish<span className="text-muted-foreground"> Notes</span>
+            </span>
           </Link>
 
           <nav className="hidden items-center gap-9 lg:flex">
@@ -135,7 +137,9 @@ export function SiteHeader() {
               className="fixed inset-y-0 left-0 z-50 flex w-72 flex-col gap-1 bg-background p-6 lg:hidden"
             >
               <div className="mb-6 flex items-center justify-between">
-                <Image src="/logo.png" alt="Velvaroma Fragrance" width={120} height={58} className="h-11 w-auto" />
+                <span className="text-lg font-semibold uppercase tracking-[0.24em] text-foreground">
+                  Lavish<span className="text-muted-foreground"> Notes</span>
+                </span>
                 <button onClick={() => setMobileOpen(false)} aria-label="Close menu">
                   <X className="h-6 w-6" />
                 </button>
@@ -150,8 +154,8 @@ export function SiteHeader() {
                   {item.label}
                 </Link>
               ))}
-              <a href="mailto:Support@velvaroma.com" className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
-                <Mail className="h-4 w-4" /> Support@velvaroma.com
+              <a href="mailto:Support@lavishnotes.com" className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
+                <Mail className="h-4 w-4" /> Support@lavishnotes.com
               </a>
             </motion.div>
           </>

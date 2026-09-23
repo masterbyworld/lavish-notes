@@ -74,12 +74,12 @@ export function ProductTabs({ product }: { product: Product }) {
               <p>
                 We process all orders within the same business day. Shipping time is 1-4 days. Once your order is
                 shipped, you will receive a tracking number via email. For any shipping-related inquiries, contact us at{' '}
-                <span className="font-semibold text-foreground">support@velvaroma.com</span>.
+                <span className="font-semibold text-foreground">support@lavishnotes.com</span>.
               </p>
               <p>
                 We accept returns within 30 <span className="font-semibold text-foreground">days</span> of delivery.
                 Items must be unused and in original condition. To initiate a return or refund, please email us at{' '}
-                <span className="font-semibold text-foreground">support@velvaroma.com</span> with your order number and
+                <span className="font-semibold text-foreground">support@lavishnotes.com</span> with your order number and
                 reason for return.
               </p>
             </div>

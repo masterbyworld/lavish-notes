@@ -9,7 +9,7 @@ import {
 } from 'react'
 
 const DAY_MS = 24 * 60 * 60 * 1000
-const STORAGE_KEY = 'velvaroma_deal_deadline'
+const STORAGE_KEY = 'lavishnotes_deal_deadline'
 
 export type TimeLeft = { days: number; hours: number; minutes: number; seconds: number }
 

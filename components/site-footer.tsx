@@ -59,31 +59,27 @@ export function SiteFooter() {
   const [activePolicy, setActivePolicy] = useState<PolicyKey | null>(null)
 
   return (
-    <footer className="bg-foreground text-background">
+    <footer className="border-t border-border bg-card text-card-foreground">
       <div className="mx-auto max-w-7xl px-4 py-14 md:px-8 md:py-16">
         <div className="grid gap-x-10 gap-y-2 md:grid-cols-[1.5fr_1.3fr_1fr_1fr] md:gap-y-0">
           {/* Brand */}
-          <FooterSection title="Define Your Scent By Velvaroma" k="Brand" open={open} toggle={toggle}>
-            <Image
-              src="/logo.png"
-              alt="Velvaroma Fragrance"
-              width={160}
-              height={80}
-              className="mt-2 h-16 w-auto brightness-0 invert"
-            />
-            <p className="mt-5 max-w-xs text-sm leading-relaxed text-background/70">
+          <FooterSection title="Define Your Scent By Lavish Notes" k="Brand" open={open} toggle={toggle}>
+            <span className="mt-2 block text-2xl font-semibold uppercase tracking-[0.28em] text-foreground">
+              Lavish<span className="text-muted-foreground"> Notes</span>
+            </span>
+            <p className="mt-5 max-w-xs text-sm leading-relaxed text-muted-foreground">
               Premium ingredients, identical scent profiles, and exceptional lasting power — all priced to fit your everyday budget. Your signature scent shouldn&apos;t cost a fortune.
             </p>
           </FooterSection>
 
           {/* Subscribe */}
           <FooterSection title="Subscribe" k="Subscribe" open={open} toggle={toggle} heading>
-            <p className="max-w-sm text-sm leading-relaxed text-background/70">
+            <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
               Enter your email below to be the first to know about new collections and product launches.
             </p>
             <form
               onSubmit={(e) => e.preventDefault()}
-              className="mt-5 flex items-center border border-background/30 bg-transparent"
+              className="mt-5 flex items-center border border-border bg-transparent"
             >
               <label htmlFor="footer-email" className="sr-only">
                 Email address
@@ -93,12 +89,12 @@ export function SiteFooter() {
                 type="email"
                 required
                 placeholder="Enter your email"
-                className="min-w-0 flex-1 bg-transparent px-4 py-3 text-sm text-background placeholder:text-background/50 focus:outline-none"
+                className="min-w-0 flex-1 bg-transparent px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
               />
               <button
                 type="submit"
                 aria-label="Subscribe"
-                className="flex h-11 w-11 shrink-0 items-center justify-center text-background transition-opacity hover:opacity-70"
+                className="flex h-11 w-11 shrink-0 items-center justify-center text-foreground transition-opacity hover:opacity-70"
               >
                 <ArrowRight className="h-4 w-4" />
               </button>
@@ -108,10 +104,10 @@ export function SiteFooter() {
           {/* Support */}
           <FooterSection title="For any Support" k="Support" open={open} toggle={toggle}>
             <a
-              href="mailto:Support@velvaroma.com"
-              className="text-sm text-background/70 transition-colors hover:text-background"
+              href="mailto:Support@lavishnotes.com"
+              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
-              Support@velvaroma.com
+              Support@lavishnotes.com
             </a>
             <div className="mt-5 flex gap-3">
               {[
@@ -122,7 +118,7 @@ export function SiteFooter() {
                   key={label}
                   href="#"
                   aria-label={label}
-                  className="flex h-11 w-11 items-center justify-center rounded-full bg-background text-foreground transition-transform hover:scale-105"
+                  className="flex h-11 w-11 items-center justify-center rounded-full bg-foreground text-background transition-transform hover:scale-105"
                 >
                   <Icon className="h-4 w-4" />
                 </a>
@@ -138,12 +134,12 @@ export function SiteFooter() {
                   {l.policy ? (
                     <button
                       onClick={() => setActivePolicy(l.policy!)}
-                      className="text-left text-sm text-background/70 transition-colors hover:text-background"
+                      className="text-left text-sm text-muted-foreground transition-colors hover:text-foreground"
                     >
                       {l.label}
                     </button>
                   ) : (
-                    <Link href={l.href!} className="text-sm text-background/70 transition-colors hover:text-background">
+                    <Link href={l.href!} className="text-sm text-muted-foreground transition-colors hover:text-foreground">
                       {l.label}
                     </Link>
                   )}
@@ -154,17 +150,17 @@ export function SiteFooter() {
         </div>
 
         {/* Bottom bar: locale + payments */}
-        <div className="mt-12 flex flex-col items-center gap-8 border-t border-background/15 pt-8 md:mt-14 md:flex-row md:justify-between md:gap-6">
+        <div className="mt-12 flex flex-col items-center gap-8 border-t border-border pt-8 md:mt-14 md:flex-row md:justify-between md:gap-6">
           <div className="flex flex-wrap items-center justify-center gap-6 md:justify-start">
-            <button className="flex items-center gap-1.5 text-sm text-background/80 hover:text-background">
+            <button className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
               United States (USD $) <ChevronDown className="h-4 w-4" />
             </button>
-            <button className="flex items-center gap-1.5 text-sm text-background/80 hover:text-background">
+            <button className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
               English <ChevronDown className="h-4 w-4" />
             </button>
             <div className="flex items-center gap-3 md:hidden">
-              <a href="#" aria-label="Facebook" className="text-background/80 hover:text-background"><Facebook className="h-4 w-4" /></a>
-              <a href="#" aria-label="Instagram" className="text-background/80 hover:text-background"><Instagram className="h-4 w-4" /></a>
+              <a href="#" aria-label="Facebook" className="text-muted-foreground hover:text-foreground"><Facebook className="h-4 w-4" /></a>
+              <a href="#" aria-label="Instagram" className="text-muted-foreground hover:text-foreground"><Instagram className="h-4 w-4" /></a>
             </div>
           </div>
 
@@ -173,7 +169,7 @@ export function SiteFooter() {
               {paymentMethods.map((p) => (
                 <span
                   key={p.alt}
-                  className="flex h-7 w-11 items-center justify-center rounded bg-background px-1.5"
+                  className="flex h-7 w-11 items-center justify-center rounded bg-foreground px-1.5"
                 >
                   <Image src={p.src || '/placeholder.svg'} alt={p.alt} width={40} height={24} className="h-4 w-auto object-contain" />
                 </span>
@@ -182,15 +178,15 @@ export function SiteFooter() {
             <button
               onClick={scrollToTop}
               aria-label="Back to top"
-              className="ml-1 hidden h-9 w-9 shrink-0 items-center justify-center rounded-full border border-background/30 text-background transition-colors hover:bg-background hover:text-foreground md:flex"
+              className="ml-1 hidden h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:bg-foreground hover:text-background md:flex"
             >
               <ArrowUp className="h-4 w-4" />
             </button>
           </div>
         </div>
 
-        <p className="mt-8 text-center text-xs text-background/50 md:text-left">
-          © {new Date().getFullYear()} Velvaroma Fragrance. Designer-inspired.
+        <p className="mt-8 text-center text-xs text-muted-foreground md:text-left">
+          © {new Date().getFullYear()} Lavish Notes. Designer-inspired.
         </p>
       </div>
 
@@ -216,13 +212,13 @@ function FooterSection({
 }) {
   const isOpen = open === k
   return (
-    <div className="border-b border-background/15 py-4 md:border-0 md:py-0">
+    <div className="border-b border-border py-4 md:border-0 md:py-0">
       <button
         onClick={() => toggle(k)}
         className="flex w-full items-center justify-between text-left md:pointer-events-none"
         aria-expanded={isOpen}
       >
-        <span className={cn(heading ? 'text-3xl font-medium' : 'text-lg font-medium', 'text-background')}>
+        <span className={cn(heading ? 'text-3xl font-medium' : 'text-lg font-medium', 'text-foreground')}>
           {title}
         </span>
         <span className="md:hidden">

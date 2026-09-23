@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { Mail, MessageCircle, Truck, Check } from 'lucide-react'
 
 const info = [
-  { icon: Mail, title: 'Email Us', detail: 'Support@velvaroma.com' },
+  { icon: Mail, title: 'Email Us', detail: 'Support@lavishnotes.com' },
   { icon: MessageCircle, title: 'Live Chat', detail: '24/7 customer support' },
   { icon: Truck, title: 'Shipping', detail: 'Free on orders over $80' },
 ]

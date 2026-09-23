@@ -249,7 +249,7 @@ export const reviews: Review[] = [
   { name: 'James Miller', rating: 5, title: 'Incredible Value', body: 'You usually have to pay triple the price for this kind of longevity. The notes are distinct and high-quality. Shipping to Texas was very quick. I’ll be a returning customer for sure.' },
   { name: 'Natalie Scott', rating: 5, title: 'Impressive Longevity', body: 'The scent profile is very sophisticated. I compared it to the one I bought at a high-end mall, and the quality is identical. Highly recommend if you want luxury scents without the ridiculous markup.' },
   { name: 'Daniel Reeves', rating: 5, title: 'My New Signature', body: 'Ordered three and got one free. The projection is insane — people ask what I’m wearing all day. This is now my everyday scent and I couldn’t be happier.' },
-  { name: 'Sophia Bennett', rating: 5, title: 'Beautifully Packaged', body: 'Arrived faster than expected and the packaging felt genuinely luxurious. The fragrance lasts a full workday on me. Velvaroma has earned a loyal customer.' },
+  { name: 'Sophia Bennett', rating: 5, title: 'Beautifully Packaged', body: 'Arrived faster than expected and the packaging felt genuinely luxurious. The fragrance lasts a full workday on me. Lavish Notes has earned a loyal customer.' },
   { name: 'Marcus Lane', rating: 5, title: 'Exceeded Expectations', body: 'I’ve tried a lot of inspired fragrances and most fade in an hour. This one performs like the real thing. The buy two get one free deal sealed it for me.' },
   { name: 'Olivia Hayes', rating: 5, title: 'Absolutely Worth It', body: 'Elegant, long-lasting, and the customer service was so helpful when I asked about sizing. I’ve already recommended it to my whole family.' },
 ]

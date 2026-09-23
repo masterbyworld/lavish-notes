@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from 'react'
 
-const STORAGE_KEY = 'velvaroma:cart'
+const STORAGE_KEY = 'lavishnotes:cart'
 
 export type CartItem = {
   id: string

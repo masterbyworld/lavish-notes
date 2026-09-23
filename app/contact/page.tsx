@@ -4,8 +4,8 @@ import { SiteFooter } from '@/components/site-footer'
 import { ContactView } from '@/components/contact-view'
 
 export const metadata: Metadata = {
-  title: 'Contact — Velvaroma Fragrance',
-  description: 'Get in touch with the Velvaroma team. Email support, live chat and free shipping over $80.',
+  title: 'Contact — Lavish Notes',
+  description: 'Get in touch with the Lavish Notes team. Email support, live chat and free shipping over $80.',
 }
 
 export default function ContactPage() {

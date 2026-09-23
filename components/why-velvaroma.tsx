@@ -24,7 +24,7 @@ const items = [
 export function WhyVelvaroma() {
   return (
     <section className="mx-auto max-w-6xl px-4 py-20 md:px-8">
-      <h2 className="text-center text-4xl font-medium text-foreground md:text-5xl">Why Velvaroma?</h2>
+      <h2 className="text-center text-4xl font-medium text-foreground md:text-5xl">Why Lavish Notes?</h2>
       <div className="mt-14 grid gap-12 md:grid-cols-3">
         {items.map((it, i) => (
           <motion.div
