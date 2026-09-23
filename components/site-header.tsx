@@ -73,7 +73,7 @@ export function SiteHeader() {
 
           <Link href="/" className="flex shrink-0 items-center gap-3 lg:flex-none" aria-label="Lavish Notes home">
             <Image
-              src="/lavish-notes-logo.png"
+              src="/lavish-notes-symbol.png"
               alt="Lavish Notes"
               width={52}
               height={52}
@@ -147,7 +147,7 @@ export function SiteHeader() {
               <div className="mb-6 flex items-center justify-between">
                 <span className="flex items-center gap-2">
                   <Image
-                    src="/lavish-notes-logo.png"
+                    src="/lavish-notes-symbol.png"
                     alt="Lavish Notes"
                     width={36}
                     height={36}
