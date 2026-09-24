@@ -25,6 +25,14 @@ function Instagram({ className }: { className?: string }) {
   )
 }
 
+const FACEBOOK_URL = 'https://web.facebook.com/profile.php?id=61594224966224#'
+const INSTAGRAM_URL = 'https://www.instagram.com/lavishnotes'
+
+const socialLinks = [
+  { Icon: Facebook, label: 'Facebook', href: FACEBOOK_URL },
+  { Icon: Instagram, label: 'Instagram', href: INSTAGRAM_URL },
+]
+
 const informationLinks: { label: string; href?: string; policy?: PolicyKey }[] = [
   { label: 'Search', href: '/shop' },
   { label: 'Customer Support', href: '/contact' },
@@ -116,13 +124,12 @@ export function SiteFooter() {
               Support@lavishnotes.com
             </a>
             <div className="mt-5 flex gap-3">
-              {[
-                { Icon: Facebook, label: 'Facebook' },
-                { Icon: Instagram, label: 'Instagram' },
-              ].map(({ Icon, label }) => (
+              {socialLinks.map(({ Icon, label, href }) => (
                 <a
                   key={label}
-                  href="#"
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label={label}
                   className="flex h-11 w-11 items-center justify-center rounded-full bg-foreground text-background transition-transform hover:scale-105"
                 >
@@ -165,8 +172,8 @@ export function SiteFooter() {
               English <ChevronDown className="h-4 w-4" />
             </button>
             <div className="flex items-center gap-3 md:hidden">
-              <a href="#" aria-label="Facebook" className="text-muted-foreground hover:text-foreground"><Facebook className="h-4 w-4" /></a>
-              <a href="#" aria-label="Instagram" className="text-muted-foreground hover:text-foreground"><Instagram className="h-4 w-4" /></a>
+              <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="text-muted-foreground hover:text-foreground"><Facebook className="h-4 w-4" /></a>
+              <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="text-muted-foreground hover:text-foreground"><Instagram className="h-4 w-4" /></a>
             </div>
           </div>
 

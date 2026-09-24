@@ -17,7 +17,7 @@ export function InstagramSupport() {
           Visit Lavish Notes Instagram For Any Support
         </h2>
         <a
-          href="https://instagram.com"
+          href="https://www.instagram.com/lavishnotes"
           target="_blank"
           rel="noopener noreferrer"
           className="mt-8 inline-flex items-center border border-foreground px-10 py-4 text-sm font-semibold uppercase tracking-wide text-foreground transition-colors hover:bg-foreground hover:text-background"
