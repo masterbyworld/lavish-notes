@@ -15,13 +15,13 @@ type Slide = {
 const slides: Slide[] = [
   {
     desktop: '/banners/creed-spring-flower.png',
-    mobile: '/banners/creed-spring-flower.png',
+    mobile: '/banners/creed-spring-flower-mobile.png',
     href: '/shop?c=CR',
     alt: 'Creed Spring Flower — shop the Creed collection',
   },
   {
     desktop: '/banners/mfk-baccarat-apom.png',
-    mobile: '/banners/mfk-baccarat-apom.png',
+    mobile: '/banners/mfk-baccarat-apom-mobile.png',
     href: '/shop?c=MF',
     alt: 'Maison Francis Kurkdjian — Baccarat Rouge 540 & APOM',
   },
