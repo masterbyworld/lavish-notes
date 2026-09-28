@@ -35,13 +35,13 @@ function round(value: number): number {
   return Math.round(value * 100) / 100
 }
 
-function itemFromProduct(product: Product, quantity: number): DataLayerObject {
+function itemFromProduct(product: Product, quantity: number, variant = product.sizeLabel): DataLayerObject {
   return {
     item_id: product.whiteSku,
     item_name: product.name,
     item_brand: product.brand,
     item_category: product.family,
-    item_variant: product.sizeLabel,
+    item_variant: variant,
     price: round(product.price),
     quantity,
   }
@@ -77,12 +77,12 @@ export function trackViewItem(product: Product): void {
 }
 
 /** GA4 `add_to_cart` + Meta `AddToCart`. */
-export function trackAddToCart(product: Product, quantity = 1): void {
+export function trackAddToCart(product: Product, quantity = 1, variant = product.sizeLabel): void {
   const value = round(product.price * quantity)
   push({ ecommerce: null })
   push({
     event: 'add_to_cart',
-    ecommerce: { currency: CURRENCY, value, items: [itemFromProduct(product, quantity)] },
+    ecommerce: { currency: CURRENCY, value, items: [itemFromProduct(product, quantity, variant)] },
     meta: {
       event: 'AddToCart',
       content_type: 'product',

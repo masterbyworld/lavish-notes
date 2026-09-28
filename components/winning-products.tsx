@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { ArrowUpRight, ShoppingBag, Star } from 'lucide-react'
 import { winningProducts, DEFAULT_SIZE, discountPercent, formatPrice } from '@/lib/products'
 import { useCart } from '@/lib/cart-context'
+import { trackAddToCart } from '@/lib/tracking'
 
 export function WinningProducts() {
   const { addItem } = useCart()
@@ -25,6 +26,7 @@ export function WinningProducts() {
       whiteSku: p.whiteSku,
       blackSku: p.blackSku,
     })
+    trackAddToCart(p, 1, DEFAULT_SIZE)
   }
 
   const heroOff = discountPercent(hero)
