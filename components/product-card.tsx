@@ -30,7 +30,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
       whiteSku: product.whiteSku,
       blackSku: product.blackSku,
     })
-    trackAddToCart(product, 1)
+    trackAddToCart(product, 1, DEFAULT_SIZE)
   }
 
   function toggleWish(e: React.MouseEvent) {
