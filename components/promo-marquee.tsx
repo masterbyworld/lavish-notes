@@ -21,11 +21,11 @@ export function PromoMarquee() {
               <span key={`${dup}-${i}`} className="flex items-center">
                 <span className="whitespace-nowrap px-6 text-sm font-medium tracking-wide">{msg}</span>
                 <Image
-                  src="/logo.png"
+                  src="/lavish-notes-symbol.png"
                   alt=""
-                  width={90}
+                  width={40}
                   height={40}
-                  className="h-7 w-auto shrink-0 opacity-90 invert"
+                  className="h-7 w-auto shrink-0 opacity-90"
                 />
               </span>
             ))}

@@ -21,11 +21,27 @@ const cormorant = Cormorant_Garamond({
   variable: '--font-cormorant',
 })
 
+const SITE_TITLE = 'Lavish Notes — Luxury Designer Inspired Perfumes'
+const SITE_DESCRIPTION =
+  'Lavish Notes offers premium designer-inspired perfumes — Baccarat, Creed, Sospiro, Parfums de Marly and more. Buy 2 Get 1 Free. Free shipping over $80.'
+
 export const metadata: Metadata = {
-  title: 'Lavish Notes — Luxury Designer Inspired Perfumes',
-  description:
-    'Lavish Notes offers premium designer-inspired perfumes — Baccarat, Creed, Sospiro, Parfums de Marly and more. Buy 2 Get 1 Free. Free shipping over $80.',
+  metadataBase: new URL('https://shop.lavishnotes.com'),
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
   generator: 'v0.app',
+  openGraph: {
+    type: 'website',
+    siteName: 'Lavish Notes',
+    url: '/',
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+  },
 }
 
 export const viewport: Viewport = {
