@@ -6,27 +6,34 @@ import { motion } from 'framer-motion'
 import { ArrowUpRight, ShoppingBag, Star } from 'lucide-react'
 import { winningProducts, DEFAULT_SIZE, discountPercent, formatPrice } from '@/lib/products'
 import { useCart } from '@/lib/cart-context'
+import { useLiveStock } from '@/lib/use-live-stock'
 import { trackAddToCart } from '@/lib/tracking'
 
 export function WinningProducts() {
   const { addItem } = useCart()
-  const [hero, ...rest] = winningProducts
+  const { resolve } = useLiveStock()
+  const withLive = (p: (typeof winningProducts)[number]) => {
+    const live = resolve(p.blackSku, { price: p.price, compareAt: p.compareAt, inStock: p.inStock })
+    return { ...p, price: live.price, compareAt: live.compareAt, inStock: live.inStock }
+  }
+  const [hero, ...rest] = winningProducts.map(withLive)
   const runners = rest.slice(0, 4)
 
   if (!hero) return null
 
-  function add(p: (typeof winningProducts)[number]) {
+  function add(p: ReturnType<typeof withLive>) {
+    const size = p.variants[0]?.sizeLabel ?? DEFAULT_SIZE
     addItem({
-      id: `${p.slug}-${DEFAULT_SIZE}`,
+      id: `${p.slug}-${p.blackSku}`,
       slug: p.slug,
       name: p.name,
       image: p.image,
-      size: DEFAULT_SIZE,
+      size,
       price: p.price,
       whiteSku: p.whiteSku,
       blackSku: p.blackSku,
     })
-    trackAddToCart(p, 1, DEFAULT_SIZE)
+    trackAddToCart(p, 1, size)
   }
 
   const heroOff = discountPercent(hero)

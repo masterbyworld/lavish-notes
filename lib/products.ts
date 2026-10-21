@@ -31,6 +31,19 @@ export type Product = {
   // `normalizeSize` (e.g. "100MLML" -> "100ML", "ParfumML" -> "Parfum").
   sizeLabel: string
   inStock: boolean
+  // Size variants from the CSV backup (first = default). Each carries its own SKU.
+  variants: ProductVariant[]
+}
+
+export type ProductVariant = {
+  sku: string
+  whiteSku: string
+  size: string
+  sizeLabel: string
+  price: number
+  compareAt: number
+  quantity: number
+  inStock: boolean
 }
 
 type RawProduct = (typeof catalog)['products'][number]
@@ -148,6 +161,16 @@ function toProduct(p: RawProduct): Product {
     size: p.size,
     sizeLabel: normalizeSize(p.size),
     inStock: p.inStock,
+    variants: p.variants.map((v) => ({
+      sku: v.sku,
+      whiteSku: v.whiteSku,
+      size: v.size,
+      sizeLabel: normalizeSize(v.size),
+      price: v.price,
+      compareAt: v.compareAt,
+      quantity: v.quantity,
+      inStock: v.inStock,
+    })),
   }
 }
 
@@ -159,6 +182,18 @@ export const products: Product[] = (catalog.products as RawProduct[]).map(toProd
 
 const bySlug = new Map(products.map((p) => [p.slug, p]))
 const byWhiteSku = new Map(products.map((p) => [p.whiteSku, p]))
+const byVariantSku = new Map<string, { product: Product; variant: ProductVariant }>()
+for (const p of products) {
+  for (const v of p.variants) {
+    if (!byVariantSku.has(v.sku)) byVariantSku.set(v.sku, { product: p, variant: v })
+    if (!byVariantSku.has(v.whiteSku)) byVariantSku.set(v.whiteSku, { product: p, variant: v })
+  }
+}
+
+/** Look up a catalog variant by its -B or -W SKU. */
+export function getVariantBySku(sku: string) {
+  return byVariantSku.get(String(sku || '').toUpperCase().replace(/\s+/g, ''))
+}
 
 // "Top Wanted" — most-reviewed, in-stock products (10 for the homepage grid).
 export const topWanted: Product[] = [...products]

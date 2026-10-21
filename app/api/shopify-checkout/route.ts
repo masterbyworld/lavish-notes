@@ -1,13 +1,11 @@
 import { NextResponse } from 'next/server'
-import { getProductByWhiteSku } from '@/lib/products'
-import { blackToWhiteSku, getVariantIdByWhiteSku, createShopifyCart } from '@/lib/shopify'
+import { getVariantBySku } from '@/lib/products'
+import { getLiveCatalog } from '@/lib/live-catalog'
+import { createShopifyCart } from '@/lib/shopify'
 
-// Builds a real Shopify cart from the shopper's replica (Black SKU) items and
-// returns the secure Shopify checkout URL.
-//
-// Flow per line:
-//   Black SKU (…-B)  ->  White SKU (…-W)  ->  live Shopify variant GID  ->  cart line
-// The shopper then checks out on Shopify against the clean White-SKU catalog.
+// Builds a real Shopify cart from the shopper's items and returns the Shopify
+// checkout URL. Each line is resolved by SKU (exact -> SKU base -> main SKU +
+// size) against the live Shopify catalog to get its variant GID.
 
 type IncomingItem = { blackSku?: string; whiteSku?: string; quantity: number }
 
@@ -27,24 +25,24 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Cart is empty' }, { status: 400 })
   }
 
-  // Merge quantities per resolved variant so duplicate lines collapse cleanly.
+  const live = await getLiveCatalog()
+  if (live.source !== 'shopify') {
+    return NextResponse.json(
+      { error: 'Checkout is temporarily unavailable. Please try again shortly.' },
+      { status: 503 },
+    )
+  }
+
   const variantQuantities = new Map<string, number>()
   let totalUnits = 0
 
   for (const raw of items) {
-    // Determine the clean White SKU. Prefer the White SKU the client sent, but
-    // always fall back to deriving it from the Black SKU (…-B -> …-W).
-    const whiteSku =
-      (raw.whiteSku && raw.whiteSku.trim()) ||
-      (raw.blackSku ? blackToWhiteSku(raw.blackSku.trim()) : '')
-
-    if (!whiteSku) {
-      return NextResponse.json({ error: 'Missing product SKU' }, { status: 422 })
-    }
-
-    // Confirm the SKU is a product we actually sell before hitting Shopify.
-    if (!getProductByWhiteSku(whiteSku)) {
-      return NextResponse.json({ error: `Unknown product SKU: ${whiteSku}` }, { status: 422 })
+    const found = getVariantBySku(raw.blackSku || '') ?? getVariantBySku(raw.whiteSku || '')
+    if (!found) {
+      return NextResponse.json(
+        { error: `Unknown product SKU: ${raw.blackSku || raw.whiteSku || ''}` },
+        { status: 422 },
+      )
     }
 
     const quantity = Math.floor(Number(raw.quantity))
@@ -53,24 +51,22 @@ export async function POST(req: Request) {
     }
     const cappedQty = Math.min(quantity, MAX_QTY_PER_LINE)
 
-    let variantId: string | null
-    try {
-      variantId = await getVariantIdByWhiteSku(whiteSku)
-    } catch (e) {
+    const lv = live.variants.get(found.variant.sku)
+    if (!lv?.variantId) {
       return NextResponse.json(
-        { error: e instanceof Error ? e.message : 'Shopify lookup failed' },
-        { status: 502 },
+        { error: `${found.product.name} (${found.variant.sizeLabel}) is not available for checkout` },
+        { status: 409 },
       )
     }
-    if (!variantId) {
+    if (!lv.inStock) {
       return NextResponse.json(
-        { error: `Product is not available for checkout: ${whiteSku}` },
+        { error: `${found.product.name} (${found.variant.sizeLabel}) is sold out` },
         { status: 409 },
       )
     }
 
     totalUnits += cappedQty
-    variantQuantities.set(variantId, (variantQuantities.get(variantId) ?? 0) + cappedQty)
+    variantQuantities.set(lv.variantId, (variantQuantities.get(lv.variantId) ?? 0) + cappedQty)
   }
 
   if (totalUnits > MAX_UNITS_PER_ORDER) {
@@ -95,7 +91,6 @@ export async function POST(req: Request) {
     )
   }
 
-  // Bypass the store password screen for the Vercel storefront sales channel.
   const url = new URL(checkoutUrl)
   url.searchParams.set('channel', 'online_store')
 
