@@ -9,6 +9,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
+import { useLiveStock } from './use-live-stock'
 
 const STORAGE_KEY = 'lavishnotes:cart'
 
@@ -133,12 +134,25 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [state.items, hydrated])
 
+  // Reprice every line with live Shopify pricing so subtotals and Buy 2 Get 1
+  // always reflect the current price, not the price at the moment of adding.
+  const { resolve, ready } = useLiveStock()
+  const items = useMemo(
+    () =>
+      state.items.map((i) => ({
+        ...i,
+        price: resolve(i.blackSku, { price: i.price, compareAt: 0, inStock: true }).price,
+      })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [state.items, ready],
+  )
+
   const value = useMemo<CartContextValue>(() => {
-    const count = state.items.reduce((n, i) => n + i.quantity, 0)
-    const rawSubtotal = state.items.reduce((n, i) => n + i.price * i.quantity, 0)
-    const { freeCount, discount } = computeDeal(state.items)
+    const count = items.reduce((n, i) => n + i.quantity, 0)
+    const rawSubtotal = items.reduce((n, i) => n + i.price * i.quantity, 0)
+    const { freeCount, discount } = computeDeal(items)
     return {
-      items: state.items,
+      items,
       count,
       rawSubtotal,
       discount,
@@ -155,7 +169,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       setQuantity: (id, quantity) => dispatch({ type: 'SET_QTY', id, quantity }),
       clear: () => dispatch({ type: 'CLEAR' }),
     }
-  }, [state.items, isOpen])
+  }, [items, isOpen])
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>
 }

@@ -1,21 +1,28 @@
-// Generates lib/catalog.json by joining three source datasets:
-//   1. data/source/route-keys.json    -> route key (GA) -> collection + brand
-//   2. data/source/sku-map.json        -> White SKU (-W) <-> Black SKU (-B)
-//   3. data/source/shopify-backup.json -> real product data keyed by Black SKU
+// Generates lib/catalog.json from the Shopify product export (the backup):
+//   1. data/source/shopify-backup.csv  -> source of truth (Shopify product CSV export)
+//   2. data/source/route-keys.json     -> route key (GA) -> collection + brand
 //
-// Re-run after updating any source file:  node scripts/build-catalog.mjs
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
+// The CSV is also mirrored to data/source/shopify-backup.json so the backup
+// stays inspectable in JSON form.
+//
+// Re-run after replacing the CSV:  node scripts/build-catalog.mjs
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
+import { parseCsv } from './csv.mjs'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const read = (p) => JSON.parse(readFileSync(join(root, p), 'utf8'))
 
+const csvPath = join(root, 'data/source/shopify-backup.csv')
+const backup = existsSync(csvPath)
+  ? parseCsv(readFileSync(csvPath, 'utf8'))
+  : read('data/source/shopify-backup.json')
+if (existsSync(csvPath)) {
+  writeFileSync(join(root, 'data/source/shopify-backup.json'), JSON.stringify(backup, null, 2))
+}
 const routeRows = read('data/source/route-keys.json')
-const skuRows = read('data/source/sku-map.json')
-const backup = read('data/source/shopify-backup.json')
 
-// 1. Route key -> { brand, collection }
 const routeMap = {}
 for (const r of routeRows) {
   const key = String(r['Route Key'] || '').trim().toUpperCase()
@@ -24,13 +31,7 @@ for (const r of routeRows) {
   if (key && collection) routeMap[key] = { brand, collection }
 }
 
-// 2. Black SKU -> White SKU (from explicit map, with -W/-B convention as fallback)
-const blackToWhite = {}
-for (const r of skuRows) {
-  const white = String(r['White Product SKU ID'] || '').trim()
-  const black = String(r['Black Product SKU ID'] || '').trim()
-  if (/^RPM-.+-W$/.test(white) && /^RPM-.+-B$/.test(black)) blackToWhite[black] = white
-}
+const cleanSku = (sku) => String(sku || '').toUpperCase().replace(/\s+/g, '')
 
 const cleanHtml = (html) =>
   String(html || '')
@@ -47,32 +48,51 @@ const toText = (html) =>
     .replace(/\s+/g, ' ')
     .trim()
 
-// 3. Walk the backup. A product row carries a Title + Variant SKU (-B);
-//    following rows with the same Handle and no Title are extra gallery images.
+// "100" | "100 ML" | "100Ml" -> "100ML"; "Default Title" -> "" (single-size product)
+function sizeLabel(raw) {
+  const s = String(raw || '').trim()
+  if (!s || /^default title$/i.test(s)) return ''
+  const volume = s.match(/^(\d+)\s*(ml)?$/i)
+  return volume ? `${volume[1]}ML` : s
+}
+
+function toVariant(row) {
+  const sku = cleanSku(row['Variant SKU'])
+  const price = Number(row['Variant Price']) || 0
+  const compareAt = Number(row['Variant Compare At Price']) || 0
+  const qty = Number(row['Variant Inventory Qty']) || 0
+  return {
+    sku,
+    whiteSku: sku.replace(/-B$/, '-W'),
+    size: sizeLabel(row['Option1 Value']),
+    price,
+    compareAt: compareAt > price ? compareAt : 0,
+    quantity: qty,
+    inStock: qty > 0 || String(row['Variant Inventory Policy']).trim() === 'continue',
+  }
+}
+
+// A product row carries a Title; following rows with the same Handle add extra
+// size variants (Variant SKU set) and/or gallery images.
 const products = []
+const seenSkus = new Set()
 let current = null
 
 for (const row of backup) {
   const handle = String(row['Handle'] || '').trim()
-  const sku = String(row['Variant SKU'] || '').trim()
   const title = String(row['Title'] || '').trim()
+  const sku = cleanSku(row['Variant SKU'])
   const image = String(row['Image Src'] || '').trim()
 
-  if (title && /^RPM-.+-B$/.test(sku)) {
-    const m = sku.match(/^RPM-([A-Z0-9]+)-\d+-B$/)
-    const routeKey = m ? m[1].toUpperCase() : ''
-    const route = routeMap[routeKey] || null
+  if (title) {
     const status = String(row['Status'] || '').trim()
-    if (status !== 'active' && status !== 'unlisted') {
+    if ((status !== 'active' && status !== 'unlisted') || !/^RPM-/.test(sku)) {
       current = null
       continue
     }
-    const price = Number(row['Variant Price']) || 0
-    const compareAt = Number(row['Variant Compare At Price']) || 0
-    const qty = Number(row['Variant Inventory Qty']) || 0
-    const size = row['Option1 Value'] ? `${String(row['Option1 Value']).trim()}ML` : ''
-    const whiteSku = blackToWhite[sku] || sku.replace(/-B$/, '-W')
-
+    const m = sku.match(/^RPM-([A-Z0-9]+)-/)
+    const routeKey = m ? m[1] : ''
+    const route = routeMap[routeKey] || null
     current = {
       id: handle,
       handle,
@@ -80,27 +100,45 @@ for (const row of backup) {
       brand: route?.brand || 'Lavish Notes',
       routeKey,
       collection: route?.collection || 'Shop With ALL',
-      whiteSku,
-      blackSku: sku,
-      price,
-      compareAt: compareAt > price ? compareAt : 0,
-      discountPct: compareAt > price ? Math.round((1 - price / compareAt) * 100) : 0,
-      size,
+      productType: String(row['Type'] || '').trim(),
+      category: String(row['Product Category'] || '').trim(),
       image,
       images: image ? [image] : [],
       description: cleanHtml(row['Body (HTML)']),
       excerpt: toText(row['Body (HTML)']).slice(0, 200),
       status,
-      inStock: qty > 0,
+      variants: [],
     }
     products.push(current)
-  } else if (current && handle === current.handle && image) {
-    if (!current.images.includes(image)) current.images.push(image)
-    if (!current.image) current.image = image
   }
+
+  if (!current || handle !== current.handle) continue
+
+  if (/^RPM-/.test(sku) && !seenSkus.has(sku)) {
+    seenSkus.add(sku)
+    current.variants.push(toVariant(row))
+  }
+  if (image && !current.images.includes(image)) current.images.push(image)
+  if (!current.image && image) current.image = image
 }
 
-// Collections index (ordered by the route-key sheet), with product counts
+// Default variant (first listed) drives the product-level summary fields.
+const catalogProducts = products
+  .filter((p) => p.variants.length > 0)
+  .map((p) => {
+    const d = p.variants[0]
+    return {
+      ...p,
+      whiteSku: d.whiteSku,
+      blackSku: d.sku,
+      price: d.price,
+      compareAt: d.compareAt,
+      discountPct: d.compareAt > d.price ? Math.round((1 - d.price / d.compareAt) * 100) : 0,
+      size: d.size,
+      inStock: p.variants.some((v) => v.inStock),
+    }
+  })
+
 const collections = []
 const seen = new Set()
 for (const r of routeRows) {
@@ -109,7 +147,7 @@ for (const r of routeRows) {
   const brand = String(r['Brand Name'] || '').trim()
   if (!key || !name || seen.has(key)) continue
   seen.add(key)
-  const count = products.filter((p) => p.routeKey === key).length
+  const count = catalogProducts.filter((p) => p.routeKey === key).length
   collections.push({ key, name, brand, count })
 }
 
@@ -117,18 +155,28 @@ const brands = collections
   .filter((c) => c.brand && c.brand !== 'All Products' && c.count > 0)
   .map((c) => ({ name: c.brand, key: c.key, collection: c.name, count: c.count }))
 
-const out = {
-  generatedAt: new Date().toISOString(),
-  productCount: products.length,
-  collections,
-  brands,
-  products,
-}
+const variantCount = catalogProducts.reduce((n, p) => n + p.variants.length, 0)
 
 mkdirSync(join(root, 'lib'), { recursive: true })
-writeFileSync(join(root, 'lib/catalog.json'), JSON.stringify(out, null, 2))
+writeFileSync(
+  join(root, 'lib/catalog.json'),
+  JSON.stringify(
+    {
+      generatedAt: new Date().toISOString(),
+      productCount: catalogProducts.length,
+      variantCount,
+      collections,
+      brands,
+      products: catalogProducts,
+    },
+    null,
+    2,
+  ),
+)
 
-console.log(`[catalog] ${products.length} products`)
+console.log(`[catalog] ${catalogProducts.length} products, ${variantCount} variants`)
+console.log(`[catalog] ${catalogProducts.filter((p) => p.variants.length > 1).length} multi-size products`)
 console.log(`[catalog] ${collections.length} collections, ${brands.length} brands`)
-const noRoute = products.filter((p) => !routeMap[p.routeKey]).length
-console.log(`[catalog] ${noRoute} products with unmapped route key -> Shop With ALL`)
+console.log(
+  `[catalog] ${catalogProducts.filter((p) => !routeMap[p.routeKey]).length} products with unmapped route key -> Shop With ALL`,
+)

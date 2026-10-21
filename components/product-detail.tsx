@@ -23,8 +23,16 @@ function deliveryWindow() {
 
 export function ProductDetail({ product }: { product: Product }) {
   const { addItem } = useCart()
-  const { isInStock } = useLiveStock()
-  const inStock = isInStock(product.whiteSku, product.inStock)
+  const { resolve } = useLiveStock()
+  const [variantSku, setVariantSku] = useState(product.blackSku)
+  const variant = product.variants.find((v) => v.sku === variantSku) ?? product.variants[0]
+  const liveFor = (v: (typeof product.variants)[number]) =>
+    resolve(v.sku, { price: v.price, compareAt: v.compareAt, inStock: v.inStock })
+  const live = variant
+    ? liveFor(variant)
+    : { price: product.price, compareAt: product.compareAt, inStock: product.inStock }
+  const inStock = live.inStock
+  const sizeLabel = variant?.sizeLabel ?? product.sizeLabel
   const [qty, setQty] = useState(1)
   const [active, setActive] = useState(0)
   const [delivery, setDelivery] = useState('')
@@ -38,9 +46,16 @@ export function ProductDetail({ product }: { product: Product }) {
     return () => clearInterval(id)
   }, [gallery.length])
 
-  const unitPrice = product.price
-  const compareAt = product.compareAt
-  const off = discountPercent(product)
+  const unitPrice = live.price
+  const compareAt = live.compareAt
+  const priced = {
+    ...product,
+    price: unitPrice,
+    compareAt,
+    whiteSku: variant?.whiteSku ?? product.whiteSku,
+    blackSku: variant?.sku ?? product.blackSku,
+  }
+  const off = discountPercent(priced)
 
   // GA4 `view_item` (+ Meta ViewContent) once per product view.
   useEffect(() => {
@@ -51,18 +66,18 @@ export function ProductDetail({ product }: { product: Product }) {
     if (!inStock) return
     addItem(
       {
-        id: `${product.slug}-${product.sizeLabel}`,
+        id: `${product.slug}-${priced.blackSku}`,
         slug: product.slug,
         name: product.name,
         image: product.image,
-        size: product.sizeLabel,
+        size: sizeLabel,
         price: unitPrice,
-        whiteSku: product.whiteSku,
-        blackSku: product.blackSku,
+        whiteSku: priced.whiteSku,
+        blackSku: priced.blackSku,
       },
       qty,
     )
-    trackAddToCart(product, qty)
+    trackAddToCart(priced, qty, sizeLabel)
   }
 
   return (
@@ -140,7 +155,9 @@ export function ProductDetail({ product }: { product: Product }) {
 
           <div className="mt-5 flex items-center gap-3">
             <span className="text-3xl font-semibold text-sale">{formatPrice(unitPrice)}</span>
-            <span className="text-lg text-muted-foreground line-through">{formatPrice(compareAt)}</span>
+            {compareAt > unitPrice && (
+              <span className="text-lg text-muted-foreground line-through">{formatPrice(compareAt)}</span>
+            )}
             {off > 0 && (
               <span className="rounded-full bg-sale px-2.5 py-1 text-xs font-semibold text-white">SAVE {off}%</span>
             )}
@@ -172,9 +189,30 @@ export function ProductDetail({ product }: { product: Product }) {
 
           <div className="mt-7">
             <p className="mb-3 text-sm font-medium text-foreground">Size</p>
-            <div className="inline-flex items-center gap-3 border border-foreground bg-foreground px-6 py-3 text-background">
-              <span className="text-sm font-semibold">{product.sizeLabel}</span>
-              <span className="text-xs text-background/70">{formatPrice(product.price)}</span>
+            <div role="radiogroup" aria-label="Size" className="flex flex-wrap gap-3">
+              {product.variants.map((v) => {
+                const selected = v.sku === variant?.sku
+                const state = liveFor(v)
+                return (
+                  <button
+                    key={v.sku}
+                    type="button"
+                    role="radio"
+                    aria-checked={selected}
+                    onClick={() => setVariantSku(v.sku)}
+                    className={`inline-flex items-center gap-3 border px-6 py-3 transition-colors ${
+                      selected
+                        ? 'border-foreground bg-foreground text-background'
+                        : 'border-border bg-background text-foreground hover:border-foreground'
+                    } ${state.inStock ? '' : 'opacity-50'}`}
+                  >
+                    <span className="text-sm font-semibold">{v.sizeLabel}</span>
+                    <span className={`text-xs ${selected ? 'text-background/70' : 'text-muted-foreground'}`}>
+                      {state.inStock ? formatPrice(state.price) : 'Sold out'}
+                    </span>
+                  </button>
+                )
+              })}
             </div>
           </div>
 

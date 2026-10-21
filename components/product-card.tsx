@@ -12,25 +12,33 @@ import { trackAddToCart } from '@/lib/tracking'
 
 export function ProductCard({ product, index = 0 }: { product: Product; index?: number }) {
   const { addItem } = useCart()
-  const { isInStock } = useLiveStock()
+  const { resolve } = useLiveStock()
   const [wished, setWished] = useState(false)
-  const off = discountPercent(product)
-  const inStock = isInStock(product.whiteSku, product.inStock)
+  const variant = product.variants[0]
+  const live = resolve(product.blackSku, {
+    price: product.price,
+    compareAt: product.compareAt,
+    inStock: product.inStock,
+  })
+  const inStock = live.inStock
+  const priced = { ...product, price: live.price, compareAt: live.compareAt }
+  const off = discountPercent(priced)
+  const sizeLabel = variant?.sizeLabel ?? DEFAULT_SIZE
 
   function quickAdd(e: React.MouseEvent) {
     e.preventDefault()
     if (!inStock) return
     addItem({
-      id: `${product.slug}-${DEFAULT_SIZE}`,
+      id: `${product.slug}-${product.blackSku}`,
       slug: product.slug,
       name: product.name,
       image: product.image,
-      size: DEFAULT_SIZE,
-      price: product.price,
+      size: sizeLabel,
+      price: live.price,
       whiteSku: product.whiteSku,
       blackSku: product.blackSku,
     })
-    trackAddToCart(product, 1, DEFAULT_SIZE)
+    trackAddToCart(priced, 1, sizeLabel)
   }
 
   function toggleWish(e: React.MouseEvent) {
@@ -96,9 +104,9 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
         </div>
 
         <div className="mt-1.5 flex items-center justify-center gap-2">
-          <span className="text-sm font-bold text-sale">{formatPrice(product.price)}</span>
-          {product.compareAt > product.price && (
-            <span className="text-xs text-muted-foreground line-through">{formatPrice(product.compareAt)}</span>
+          <span className="text-sm font-bold text-sale">{formatPrice(priced.price)}</span>
+          {priced.compareAt > priced.price && (
+            <span className="text-xs text-muted-foreground line-through">{formatPrice(priced.compareAt)}</span>
           )}
         </div>
 

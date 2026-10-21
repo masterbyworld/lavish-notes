@@ -1,19 +1,17 @@
 import { NextResponse } from 'next/server'
-import { getProductByWhiteSku, SIZES } from '@/lib/products'
+import { getVariantBySku } from '@/lib/products'
+import { getLiveCatalog } from '@/lib/live-catalog'
 
-// Checkout substitution: the storefront sends the WHITE SKUs the shopper
-// browsed. The server is authoritative — it looks each White SKU up, swaps it
-// for the real backend BLACK SKU + product data, and recomputes every price
-// and the Buy-2-Get-1 discount so the order processes correctly on the backend.
+// Server-authoritative order pricing. Each line is resolved by SKU, priced
+// from live Shopify (falling back to the CSV backup price), and the
+// Buy-2-Get-1 discount is recomputed here — never trusted from the client.
 
-type IncomingItem = { whiteSku: string; size: string; quantity: number }
+type IncomingItem = { whiteSku?: string; blackSku?: string; size?: string; quantity: number }
 
 const MAX_QTY_PER_LINE = 20
 const MAX_UNITS_PER_ORDER = 60
 
-function sizeMultiplier(label: string): number {
-  return SIZES.find((s) => s.label === label)?.multiplier ?? 1
-}
+const round = (n: number) => Math.round(n * 100) / 100
 
 export async function POST(req: Request) {
   let body: { items?: IncomingItem[] }
@@ -28,9 +26,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Cart is empty' }, { status: 400 })
   }
 
+  const live = await getLiveCatalog()
+
   const lineItems: {
     whiteSku: string
     blackSku: string
+    variantId: string | null
     title: string
     brand: string
     size: string
@@ -42,15 +43,14 @@ export async function POST(req: Request) {
   let totalUnits = 0
 
   for (const raw of items) {
-    const product = getProductByWhiteSku(raw.whiteSku)
-    if (!product) {
+    const found = getVariantBySku(raw.blackSku || '') ?? getVariantBySku(raw.whiteSku || '')
+    if (!found) {
       return NextResponse.json(
-        { error: `Unknown product SKU: ${raw.whiteSku}` },
+        { error: `Unknown product SKU: ${raw.blackSku || raw.whiteSku || ''}` },
         { status: 422 },
       )
     }
 
-    // Validate quantity server-side — positive integer, capped.
     const quantity = Math.floor(Number(raw.quantity))
     if (!Number.isFinite(quantity) || quantity < 1) {
       return NextResponse.json({ error: 'Invalid quantity' }, { status: 422 })
@@ -58,18 +58,20 @@ export async function POST(req: Request) {
     const cappedQty = Math.min(quantity, MAX_QTY_PER_LINE)
     totalUnits += cappedQty
 
-    // Recompute price from the authoritative catalog value, never the client's.
-    const unitPrice = Math.round(product.price * sizeMultiplier(raw.size) * 100) / 100
+    const { product, variant } = found
+    const lv = live.variants.get(variant.sku)
+    const unitPrice = round(lv?.price ?? variant.price)
 
     lineItems.push({
-      whiteSku: product.whiteSku,
-      blackSku: product.blackSku, // <-- the real backend product
+      whiteSku: variant.whiteSku,
+      blackSku: variant.sku,
+      variantId: lv?.variantId ?? null,
       title: product.name,
       brand: product.brand,
-      size: raw.size,
+      size: variant.sizeLabel,
       unitPrice,
       quantity: cappedQty,
-      lineTotal: Math.round(unitPrice * cappedQty * 100) / 100,
+      lineTotal: round(unitPrice * cappedQty),
     })
   }
 
@@ -87,18 +89,18 @@ export async function POST(req: Request) {
   const freeCount = Math.floor(units.length / 3)
   let discount = 0
   for (let n = 0; n < freeCount; n++) discount += units[n]
-  discount = Math.round(discount * 100) / 100
+  discount = round(discount)
 
-  const rawSubtotal = Math.round(lineItems.reduce((n, li) => n + li.lineTotal, 0) * 100) / 100
-  const total = Math.round((rawSubtotal - discount) * 100) / 100
+  const rawSubtotal = round(lineItems.reduce((n, li) => n + li.lineTotal, 0))
+  const total = round(rawSubtotal - discount)
 
   return NextResponse.json({
-    // The backend order references BLACK SKUs only.
     lineItems,
     rawSubtotal,
     freeCount,
     discount,
     total,
     currency: 'USD',
+    priceSource: live.source,
   })
 }
