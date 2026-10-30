@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowRight, Check, ChevronDown } from 'lucide-react'
 import { collections, productsByRouteKey } from '@/lib/products'
 import { ProductCard } from '@/components/product-card'
+import { useLiveStock } from '@/lib/use-live-stock'
 
 // A brand/collection browser: shows one house by default and lets the shopper
 // switch to any other via a dropdown, always surfacing which one is selected.
@@ -38,7 +39,17 @@ export function CollectionPicker({
   const menuRef = useRef<HTMLDivElement>(null)
 
   const active = ordered.find((c) => c.key === activeKey) ?? ordered[0]
-  const items = useMemo(() => (active ? productsByRouteKey(active.key).slice(0, limit) : []), [active, limit])
+  // Home page NEVER shows sold-out scents — live Shopify stock wins over the CSV flag.
+  const { isInStock } = useLiveStock()
+  const items = useMemo(
+    () =>
+      active
+        ? productsByRouteKey(active.key)
+            .filter((p) => isInStock(p.blackSku, p.inStock))
+            .slice(0, limit)
+        : [],
+    [active, limit, isInStock],
+  )
 
   useEffect(() => {
     if (!open) return
