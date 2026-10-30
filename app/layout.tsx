@@ -1,24 +1,17 @@
 import { Analytics } from '@vercel/analytics/next'
 import Script from 'next/script'
 import type { Metadata, Viewport } from 'next'
-import { Jost, Cormorant_Garamond } from 'next/font/google'
+import { Figtree } from 'next/font/google'
 import { CartProvider } from '@/lib/cart-context'
 import { CartDrawer } from '@/components/cart-drawer'
 import { AnnouncementProvider } from '@/lib/announcement-context'
 import './globals.css'
 
-const jost = Jost({
+const figtree = Figtree({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-jost',
-})
-
-// Elegant editorial serif used for display headings and the wordmark, echoing
-// the Lavish Notes logo's classic serif.
-const cormorant = Cormorant_Garamond({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-cormorant',
+  variable: '--font-figtree',
+  display: 'swap',
 })
 
 const SITE_TITLE = 'Lavish Notes — Luxury Designer Inspired Perfumes'
@@ -57,7 +50,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${jost.variable} ${cormorant.variable} bg-background`}>
+    <html lang="en" className={`${figtree.variable} bg-background`}>
       <head>
         {/* Ensure the ecommerce dataLayer exists before any tracking runs, even
             when no GTM container ID is configured yet. */}

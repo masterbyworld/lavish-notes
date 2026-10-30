@@ -87,8 +87,8 @@ export function CartDrawer() {
                           <Image src={item.image || '/placeholder.svg'} alt={item.name} fill className="object-cover" />
                         </div>
                         <div className="flex flex-1 flex-col">
-                          <p className="text-[15px] font-medium leading-snug text-foreground">{item.name}</p>
-                          <p className="mt-1 text-sm text-muted-foreground">
+                          <p className="text-sm font-semibold leading-snug text-foreground sm:text-base">{item.name}</p>
+                          <p className="mt-1 text-xs text-muted-foreground">
                             <span className="text-muted-foreground">Size:</span> {item.size}
                           </p>
                           <p className="mt-1 text-[15px] font-medium text-foreground">{formatPrice(item.price)}</p>
@@ -146,8 +146,8 @@ export function CartDrawer() {
                   </div>
                 )}
                 <div className="flex items-center justify-between">
-                  <span className="text-lg font-medium text-foreground">Subtotal</span>
-                  <span className="flex items-baseline gap-2 text-lg font-medium text-foreground">
+                  <span className="text-lg font-semibold text-foreground sm:text-xl">Subtotal</span>
+                  <span className="flex items-baseline gap-2 text-lg font-semibold text-foreground sm:text-xl">
                     {discount > 0 && (
                       <span className="text-sm text-muted-foreground line-through">{formatPrice(rawSubtotal)}</span>
                     )}
