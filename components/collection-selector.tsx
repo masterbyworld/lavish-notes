@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowRight, Check, ChevronDown, Search, Tag } from 'lucide-react'
 import { collections, productsByRouteKey } from '@/lib/products'
 import { ProductCard } from '@/components/product-card'
+import { useLiveStock } from '@/lib/use-live-stock'
 
 // Order the brand collections so Creed is always the first / default option,
 // then by catalog depth so the biggest houses surface first.
@@ -23,10 +24,11 @@ export function CollectionSelector() {
 
   const active = ordered.find((c) => c.key === activeKey) ?? ordered[0]
 
-  // Home page NEVER shows sold-out scents — only in-stock products appear.
+  // Home page NEVER shows sold-out scents — live Shopify stock wins over the CSV flag.
+  const { isInStock } = useLiveStock()
   const inStockItems = useMemo(
-    () => (active ? productsByRouteKey(active.key).filter((p) => p.inStock) : []),
-    [active],
+    () => (active ? productsByRouteKey(active.key).filter((p) => isInStock(p.blackSku, p.inStock)) : []),
+    [active, isInStock],
   )
   const items = useMemo(() => inStockItems.slice(0, 10), [inStockItems])
 

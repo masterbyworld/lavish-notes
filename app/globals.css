@@ -25,8 +25,11 @@
   --color-ring: var(--ring);
   --color-sale: var(--sale);
 
-  --font-sans: var(--font-jost), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-cormorant), ui-serif, Georgia, 'Times New Roman', serif;
+  --color-ink: var(--ink);
+
+  /* Single typeface site-wide: headings and body both use Figtree. */
+  --font-sans: var(--font-figtree), 'Avenir Next', Avenir, ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-sans);
 
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
@@ -63,8 +66,11 @@
   --accent-foreground: oklch(0.97 0 0);
 
   /* red urgency / sale accent */
-  --sale: oklch(0.6 0.22 27);
-  --destructive: oklch(0.6 0.22 27);
+  --sale: #d6453d;
+  --destructive: #d6453d;
+
+  /* near-black text on white product cards */
+  --ink: #111111;
 
   --border: oklch(0.27 0 0);
   --input: oklch(0.27 0 0);
@@ -79,10 +85,10 @@
     @apply bg-background text-foreground font-sans;
   }
   h1, h2, h3, h4 {
-    @apply font-serif tracking-tight;
+    @apply font-sans tracking-tight;
   }
   .font-display {
-    font-family: var(--font-serif);
+    font-family: var(--font-sans);
   }
 }
 

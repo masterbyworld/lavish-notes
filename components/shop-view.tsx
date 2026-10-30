@@ -6,6 +6,7 @@ import { Search, ChevronDown, Check } from 'lucide-react'
 import { products, collections, getCollectionByKey, type Product } from '@/lib/products'
 import { ProductCard } from '@/components/product-card'
 import { OfferShowcase } from '@/components/offer-showcase'
+import { useLiveStock } from '@/lib/use-live-stock'
 
 const sorts = [
   { key: 'featured', label: 'Featured' },
@@ -100,11 +101,15 @@ export function ShopView({
   }, [sort, collection, searchMode, matches])
 
   // Sold-out scents are hidden by default; the shopper opts in via the toggle.
-  const soldOutCount = useMemo(() => filtered.filter((p) => !p.inStock).length, [filtered])
+  const { isInStock } = useLiveStock()
+  const soldOutCount = useMemo(
+    () => filtered.filter((p) => !isInStock(p.blackSku, p.inStock)).length,
+    [filtered, isInStock],
+  )
   const inStockCount = filtered.length - soldOutCount
   const visible = useMemo(
-    () => (showSoldOut ? filtered : filtered.filter((p) => p.inStock)),
-    [filtered, showSoldOut],
+    () => (showSoldOut ? filtered : filtered.filter((p) => isInStock(p.blackSku, p.inStock))),
+    [filtered, showSoldOut, isInStock],
   )
 
   // Close the collection switcher when clicking outside or pressing Escape.

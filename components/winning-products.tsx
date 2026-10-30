@@ -16,7 +16,7 @@ export function WinningProducts() {
     const live = resolve(p.blackSku, { price: p.price, compareAt: p.compareAt, inStock: p.inStock })
     return { ...p, price: live.price, compareAt: live.compareAt, inStock: live.inStock }
   }
-  const [hero, ...rest] = winningProducts.map(withLive)
+  const [hero, ...rest] = winningProducts.map(withLive).filter((p) => p.inStock)
   const runners = rest.slice(0, 4)
 
   if (!hero) return null

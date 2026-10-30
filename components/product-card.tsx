@@ -57,7 +57,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
       <Link href={`/product/${product.slug}`} className="block">
         <div className="relative aspect-square overflow-hidden bg-white">
           {off > 0 && (
-            <span className="absolute left-2.5 top-2.5 z-10 rounded-full bg-sale px-2.5 py-1 text-[11px] font-bold text-white">
+            <span className="absolute left-2.5 top-2.5 z-10 rounded-full bg-sale px-2.5 py-1 text-[10px] font-bold text-white sm:text-xs">
               -{off}%
             </span>
           )}
@@ -70,7 +70,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
             <Heart className={`h-4 w-4 ${wished ? 'fill-sale text-sale' : ''}`} />
           </button>
           {!inStock && (
-            <span className="absolute left-1/2 top-3 z-10 -translate-x-1/2 rounded-full bg-neutral-900/85 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-white">
+            <span className="absolute left-1/2 top-3 z-10 -translate-x-1/2 rounded-full bg-ink px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white sm:text-xs">
               Sold Out
             </span>
           )}
@@ -86,16 +86,16 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
         </div>
       </Link>
 
-      <div className="flex flex-1 flex-col px-3 pb-3 pt-3 text-center">
-        <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{product.brand}</p>
+      <div className="flex flex-1 flex-col bg-white px-3 pb-3 pt-3 text-center">
+        <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-neutral-500">{product.brand}</p>
         <Link href={`/product/${product.slug}`} className="mt-1 block">
-          <h3 className="line-clamp-2 min-h-[2.2rem] text-[13px] font-semibold uppercase leading-tight tracking-wide text-foreground transition-colors group-hover:text-muted-foreground">
+          <h3 className="line-clamp-2 min-h-[2.2rem] text-[13px] font-semibold leading-tight text-ink transition-colors group-hover:text-neutral-600 sm:min-h-[2.6rem] sm:text-base">
             {product.name}
           </h3>
         </Link>
 
-        <div className="mt-1.5 flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground">
-          <span className="flex items-center gap-0.5 text-foreground">
+        <div className="mt-1.5 flex items-center justify-center gap-1.5 text-[11px] text-neutral-500">
+          <span className="flex items-center gap-0.5 text-ink">
             <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
             {product.rating.toFixed(1)}
           </span>
@@ -103,10 +103,10 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
           <span className="truncate">{product.family}</span>
         </div>
 
-        <div className="mt-1.5 flex items-center justify-center gap-2">
-          <span className="text-sm font-bold text-sale">{formatPrice(priced.price)}</span>
+        <div className="mt-1.5 flex items-baseline justify-center gap-2">
+          <span className="text-sm font-bold text-sale sm:text-lg">{formatPrice(priced.price)}</span>
           {priced.compareAt > priced.price && (
-            <span className="text-xs text-muted-foreground line-through">{formatPrice(priced.compareAt)}</span>
+            <span className="text-[11px] text-neutral-400 line-through sm:text-sm">{formatPrice(priced.compareAt)}</span>
           )}
         </div>
 
@@ -114,13 +114,13 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
           {inStock ? (
             <button
               onClick={quickAdd}
-              className="flex w-full items-center justify-center gap-2 border border-foreground/25 bg-transparent py-2.5 text-xs font-semibold uppercase tracking-wide text-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
+              className="flex w-full items-center justify-center gap-2 rounded-md bg-ink py-2.5 text-sm font-bold text-white transition-all hover:bg-ink/85 focus-visible:opacity-100 md:pointer-events-none md:translate-y-1 md:opacity-0 md:group-hover:pointer-events-auto md:group-hover:translate-y-0 md:group-hover:opacity-100 md:group-focus-within:pointer-events-auto md:group-focus-within:translate-y-0 md:group-focus-within:opacity-100"
               aria-label={`Add ${product.name} to cart`}
             >
-              <ShoppingBag className="h-3.5 w-3.5" /> Add to cart
+              <ShoppingBag className="h-4 w-4" /> Quick add
             </button>
           ) : (
-            <span className="flex w-full items-center justify-center bg-muted py-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <span className="flex w-full items-center justify-center rounded-md bg-neutral-100 py-2.5 text-sm font-bold text-neutral-400">
               Out of stock
             </span>
           )}
