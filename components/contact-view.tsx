@@ -33,7 +33,7 @@ export function ContactView() {
           className="text-center"
         >
           <p className="text-xs uppercase tracking-[0.32em] text-muted-foreground">We&apos;re Here To Help</p>
-          <h1 className="mt-4 text-balance text-4xl font-medium text-foreground md:text-6xl">
+          <h1 className="mt-4 text-balance text-4xl font-extrabold text-foreground md:text-6xl">
             Let&apos;s Talk Fragrance
           </h1>
           <p className="mx-auto mt-4 max-w-xl text-pretty text-muted-foreground">

@@ -78,7 +78,7 @@ export function SiteFooter() {
                 alt="Lavish Notes"
                 width={200}
                 height={200}
-                className="h-36 w-auto object-contain"
+                className="h-36 w-auto object-contain invert"
               />
             </span>
             <p className="mt-5 max-w-xs text-sm leading-relaxed text-muted-foreground">

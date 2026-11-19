@@ -24,7 +24,7 @@ const items = [
 export function WhyVelvaroma() {
   return (
     <section className="mx-auto max-w-6xl px-4 py-20 md:px-8">
-      <h2 className="text-center text-4xl font-medium text-foreground md:text-5xl">Why Lavish Notes?</h2>
+      <h2 className="text-center text-4xl font-extrabold text-foreground md:text-5xl">Why Lavish Notes?</h2>
       <div className="mt-14 grid gap-12 md:grid-cols-3">
         {items.map((it, i) => (
           <motion.div
@@ -36,7 +36,7 @@ export function WhyVelvaroma() {
             className="flex flex-col items-center text-center"
           >
             <it.icon className="h-12 w-12 text-foreground" strokeWidth={1.4} />
-            <h3 className="mt-5 text-xl font-medium text-foreground">{it.title}</h3>
+            <h3 className="mt-5 text-xl font-bold text-foreground">{it.title}</h3>
             <p className="mt-3 max-w-xs text-pretty leading-relaxed text-muted-foreground">{it.desc}</p>
           </motion.div>
         ))}

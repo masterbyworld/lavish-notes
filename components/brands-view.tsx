@@ -17,7 +17,7 @@ export function BrandsView({ initialBrand }: { initialBrand?: string }) {
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 md:px-8">
       <div className="mb-10 text-center">
-        <h1 className="text-4xl font-medium text-foreground md:text-5xl">Shop With Brand</h1>
+        <h1 className="text-4xl font-extrabold text-foreground md:text-5xl">Shop With Brand</h1>
         <p className="mt-3 text-sm text-muted-foreground">Explore our curated houses — inspired by the world&apos;s most coveted fragrances.</p>
       </div>
 
@@ -39,7 +39,7 @@ export function BrandsView({ initialBrand }: { initialBrand?: string }) {
         ))}
       </div>
 
-      <h2 className="mb-8 text-center text-2xl font-medium text-foreground">{active}</h2>
+      <h2 className="mb-8 text-center text-2xl font-extrabold text-foreground">{active}</h2>
 
       <AnimatePresence mode="wait">
         <motion.div

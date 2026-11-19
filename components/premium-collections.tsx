@@ -18,7 +18,7 @@ export function PremiumCollections() {
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-16 text-center md:px-8">
-      <h2 className="mx-auto max-w-3xl text-balance text-3xl font-medium text-foreground md:text-4xl">
+      <h2 className="mx-auto max-w-3xl text-balance text-3xl font-extrabold text-foreground md:text-4xl">
         Define Your Signature With Our Premium Collections
       </h2>
       <p className="mx-auto mt-4 max-w-2xl text-pretty text-muted-foreground">

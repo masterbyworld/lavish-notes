@@ -8,7 +8,7 @@ export function ProductVideos() {
   return (
     <section className="mx-auto max-w-7xl px-4 py-16 md:px-8">
       <div className="mb-10 text-center">
-        <h2 className="text-3xl font-medium text-foreground md:text-4xl">Straight From Our Warehouse</h2>
+        <h2 className="text-3xl font-extrabold text-foreground md:text-4xl">Straight From Our Warehouse</h2>
         <div className="mt-3 flex items-center justify-center gap-2">
           <div className="flex">
             {Array.from({ length: 5 }).map((_, i) => (

@@ -8,7 +8,7 @@ export function CollectionsView() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 md:px-8">
       <div className="mb-10 text-center">
-        <h1 className="text-4xl font-medium text-foreground md:text-5xl">All Collections</h1>
+        <h1 className="text-4xl font-extrabold text-foreground md:text-5xl">All Collections</h1>
         <p className="mt-3 text-sm text-muted-foreground">
           {collectionsCatalog.length} curated collections — inspired by the world&apos;s most coveted fragrances.
         </p>

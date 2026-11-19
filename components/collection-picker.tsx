@@ -73,7 +73,7 @@ export function CollectionPicker({
     <div>
       <div className="text-center">
         {eyebrow && <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground">{eyebrow}</p>}
-        <h2 className="mt-3 text-3xl font-medium text-foreground md:text-4xl">{heading}</h2>
+        <h2 className="mt-3 text-3xl font-extrabold text-foreground md:text-4xl">{heading}</h2>
         {description && <p className="mx-auto mt-4 max-w-2xl text-pretty text-muted-foreground">{description}</p>}
       </div>
 

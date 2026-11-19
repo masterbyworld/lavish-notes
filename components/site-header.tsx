@@ -84,7 +84,7 @@ export function SiteHeader() {
               width={52}
               height={52}
               priority
-              className="h-11 w-11 object-contain md:h-12 md:w-12"
+              className="h-11 w-11 object-contain invert md:h-12 md:w-12"
             />
             <span className="hidden font-display text-2xl font-semibold uppercase tracking-[0.32em] text-foreground sm:block md:text-[1.7rem]">
               Lavish<span className="text-muted-foreground"> Notes</span>
@@ -157,7 +157,7 @@ export function SiteHeader() {
                     alt="Lavish Notes"
                     width={36}
                     height={36}
-                    className="h-9 w-9 object-contain"
+                    className="h-9 w-9 object-contain invert"
                   />
                   <span className="font-display text-lg font-semibold uppercase tracking-[0.24em] text-foreground">
                     Lavish<span className="text-muted-foreground"> Notes</span>

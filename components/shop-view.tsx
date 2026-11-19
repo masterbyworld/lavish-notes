@@ -144,7 +144,7 @@ export function ShopView({
       )}
 
       <div className="mb-8 text-center">
-        <h1 className="text-4xl font-medium text-foreground md:text-5xl">
+        <h1 className="text-4xl font-extrabold text-foreground md:text-5xl">
           {searchMode
             ? `Found ${visible.length} result${visible.length === 1 ? '' : 's'} for "${query}"`
             : collection
@@ -302,7 +302,7 @@ export function ShopView({
       {searchMode && related.length > 0 && (
         <section className="mt-20 border-t border-border pt-14">
           <div className="mb-8 text-center">
-            <h2 className="text-3xl font-medium text-foreground md:text-4xl">You Might Also Like</h2>
+            <h2 className="text-3xl font-extrabold text-foreground md:text-4xl">You Might Also Like</h2>
             <p className="mt-2 text-sm text-muted-foreground">
               Similar fragrances shoppers love, based on your search
             </p>

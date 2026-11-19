@@ -9,7 +9,7 @@ import './globals.css'
 
 const figtree = Figtree({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
+  weight: ['300', '400', '500', '600', '700', '800', '900'],
   variable: '--font-figtree',
   display: 'swap',
 })
@@ -38,8 +38,8 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  colorScheme: 'dark',
-  themeColor: '#0a0a0a',
+  colorScheme: 'light',
+  themeColor: '#ffffff',
 }
 
 const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID

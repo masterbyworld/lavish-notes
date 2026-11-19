@@ -62,7 +62,7 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
           >
             <div className="rounded-xl bg-background p-6 shadow-2xl md:p-8">
               <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-lg font-medium text-foreground">Search products</h2>
+                <h2 className="text-lg font-extrabold text-foreground">Search products</h2>
                 <button onClick={onClose} aria-label="Close search" className="text-muted-foreground hover:text-foreground">
                   <X className="h-5 w-5" />
                 </button>

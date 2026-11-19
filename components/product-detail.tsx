@@ -151,7 +151,7 @@ export function ProductDetail({ product }: { product: Product }) {
           </div>
 
           <p className="mt-3 text-xs uppercase tracking-[0.2em] text-muted-foreground">{product.inspiredBy}</p>
-          <h1 className="mt-1 text-3xl font-medium text-foreground md:text-4xl">{product.name}</h1>
+          <h1 className="mt-1 text-3xl font-extrabold text-foreground md:text-4xl">{product.name}</h1>
 
           <div className="mt-5 flex items-center gap-3">
             <span className="text-3xl font-semibold text-sale">{formatPrice(unitPrice)}</span>

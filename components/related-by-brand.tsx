@@ -19,7 +19,7 @@ export function RelatedByBrand({ products, brand }: { products: Product[]; brand
     <section className="mx-auto max-w-7xl px-4 py-16 md:px-8">
       <div className="mb-8 flex items-end justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-medium text-foreground md:text-4xl">You Might Also Like</h2>
+          <h2 className="text-3xl font-extrabold text-foreground md:text-4xl">You Might Also Like</h2>
           <p className="mt-2 text-sm text-muted-foreground">More from the {brand} collection</p>
         </div>
         <div className="hidden gap-2 sm:flex">

@@ -29,7 +29,7 @@ export function HappyCustomers() {
       onMouseLeave={() => setPaused(false)}
     >
       <div className="mb-10 flex flex-col items-center gap-4">
-        <h2 className="text-3xl font-medium text-foreground md:text-4xl">Happy Customers</h2>
+        <h2 className="text-3xl font-extrabold text-foreground md:text-4xl">Happy Customers</h2>
         <div className="flex items-center gap-3 rounded-full border border-border px-3 py-1.5">
           <button onClick={() => setPage((p) => (p - 1 + totalPages) % totalPages)} aria-label="Previous reviews">
             <ChevronLeft className="h-4 w-4" />
