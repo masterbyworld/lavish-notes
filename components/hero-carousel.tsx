@@ -14,16 +14,16 @@ type Slide = {
 
 const slides: Slide[] = [
   {
-    desktop: '/banners/creed-spring-flower.png',
-    mobile: '/banners/creed-spring-flower-mobile.png',
+    desktop: '/banners/creed-wild-vetiver.png',
+    mobile: '/banners/creed-wild-vetiver-mobile.jpg',
     href: '/shop?c=CR',
-    alt: 'Creed Spring Flower — shop the Creed collection',
+    alt: 'New Creed Wild Vetiver decant — shop now',
   },
   {
-    desktop: '/banners/mfk-baccarat-apom.png',
-    mobile: '/banners/mfk-baccarat-apom-mobile.png',
-    href: '/shop?c=MF',
-    alt: 'Maison Francis Kurkdjian — Baccarat Rouge 540 & APOM',
+    desktop: '/banners/creed-silver-mountain-water.png',
+    mobile: '/banners/creed-silver-mountain-water-mobile.png',
+    href: '/product/creed-silver-mountain-water',
+    alt: 'Creed Silver Mountain Water — shop now',
   },
 ]
 
@@ -51,7 +51,7 @@ export function HeroCarousel() {
       aria-roledescription="carousel"
       aria-label="Featured fragrances"
     >
-      <div className="relative aspect-[3/4] w-full sm:aspect-[16/9] md:aspect-[1451/586]">
+      <div className="relative aspect-[3/4] w-full md:aspect-[1445/564]">
         <AnimatePresence mode="sync">
           <motion.div
             key={index}
