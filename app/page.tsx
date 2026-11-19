@@ -28,6 +28,7 @@ export default function HomePage() {
       <HouseTabs id="scents" title="Explore Iconic Scents" eyebrowFromBrand tabs={SCENT_TABS} defaultTab="Bond No. 9" large />
       <WinningSpotlight />
       <CuratorsChoice defaultBrand="Creed" />
+      <CuratorsChoice defaultBrand="Bond No. 9" />
       <MostWanted />
       <BrandShowcase brand="Louis Vuitton" title="Louis Vuitton Collection" />
       <section id="reviews">
