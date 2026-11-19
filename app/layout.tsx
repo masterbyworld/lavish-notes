@@ -1,16 +1,18 @@
 import { Analytics } from '@vercel/analytics/next'
 import Script from 'next/script'
 import type { Metadata, Viewport } from 'next'
-import { Figtree } from 'next/font/google'
+import { Jost } from 'next/font/google'
 import { CartProvider } from '@/lib/cart-context'
 import { CartDrawer } from '@/components/cart-drawer'
 import { AnnouncementProvider } from '@/lib/announcement-context'
+import { SavedProvider } from '@/lib/saved-context'
+import { SavedOverlays } from '@/components/saved-overlays'
 import './globals.css'
 
-const figtree = Figtree({
+const jost = Jost({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700', '800', '900'],
-  variable: '--font-figtree',
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-jost',
   display: 'swap',
 })
 
@@ -50,7 +52,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${figtree.variable} bg-background`}>
+    <html lang="en" className={`${jost.variable} bg-background`}>
       <head>
         {/* Ensure the ecommerce dataLayer exists before any tracking runs, even
             when no GTM container ID is configured yet. */}
@@ -77,8 +79,11 @@ export default function RootLayout({
         )}
         <AnnouncementProvider>
           <CartProvider>
-            {children}
-            <CartDrawer />
+            <SavedProvider>
+              {children}
+              <SavedOverlays />
+              <CartDrawer />
+            </SavedProvider>
           </CartProvider>
         </AnnouncementProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}

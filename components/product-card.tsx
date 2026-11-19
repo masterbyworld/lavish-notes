@@ -2,18 +2,19 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { ShoppingBag, Heart, Star } from 'lucide-react'
+import { Eye, Heart, Shuffle, ShoppingBag } from 'lucide-react'
 import { useCart } from '@/lib/cart-context'
 import { useLiveStock } from '@/lib/use-live-stock'
-import { type Product, DEFAULT_SIZE, discountPercent, formatPrice } from '@/lib/products'
+import { useSaved } from '@/lib/saved-context'
+import { type Product, DEFAULT_SIZE, discountPercent, formatMoney } from '@/lib/products'
 import { trackAddToCart } from '@/lib/tracking'
+import { cn } from '@/lib/utils'
 
 export function ProductCard({ product, index = 0 }: { product: Product; index?: number }) {
   const { addItem } = useCart()
   const { resolve } = useLiveStock()
-  const [wished, setWished] = useState(false)
+  const { isWished, toggleWish, isCompared, toggleCompare, openQuickView } = useSaved()
   const variant = product.variants[0]
   const live = resolve(product.blackSku, {
     price: product.price,
@@ -24,9 +25,11 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
   const priced = { ...product, price: live.price, compareAt: live.compareAt }
   const off = discountPercent(priced)
   const sizeLabel = variant?.sizeLabel ?? DEFAULT_SIZE
+  const wished = isWished(product.slug)
+  const compared = isCompared(product.slug)
+  const href = `/product/${product.slug}`
 
-  function quickAdd(e: React.MouseEvent) {
-    e.preventDefault()
+  function quickAdd() {
     if (!inStock) return
     addItem({
       id: `${product.slug}-${product.blackSku}`,
@@ -41,91 +44,99 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
     trackAddToCart(priced, 1, sizeLabel)
   }
 
-  function toggleWish(e: React.MouseEvent) {
-    e.preventDefault()
-    setWished((v) => !v)
-  }
+  const actions = [
+    {
+      label: wished ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`,
+      onClick: () => toggleWish(product.slug),
+      pressed: wished,
+      icon: <Heart className={cn('h-[18px] w-[18px]', wished && 'fill-sale text-sale')} />,
+    },
+    {
+      label: inStock ? `Add ${product.name} to cart` : `${product.name} is sold out`,
+      onClick: quickAdd,
+      disabled: !inStock,
+      icon: <ShoppingBag className="h-[18px] w-[18px]" />,
+    },
+    {
+      label: `Quick view ${product.name}`,
+      onClick: () => openQuickView(product.slug),
+      icon: <Eye className="h-[18px] w-[18px]" />,
+    },
+    {
+      label: compared ? `Remove ${product.name} from compare` : `Compare ${product.name}`,
+      onClick: () => toggleCompare(product.slug),
+      pressed: compared,
+      icon: <Shuffle className={cn('h-[18px] w-[18px]', compared && 'text-sale')} />,
+    },
+  ]
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
+    <motion.article
+      initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-60px' }}
-      transition={{ duration: 0.5, delay: (index % 5) * 0.05 }}
-      className="group flex flex-col border border-border bg-card transition-colors hover:border-foreground/30"
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{ duration: 0.45, delay: (index % 5) * 0.05 }}
+      className="group relative flex h-full flex-col bg-card p-2 transition-shadow duration-300 hover:shadow-[0_10px_30px_rgba(0,0,0,0.08)] md:p-3"
     >
-      <Link href={`/product/${product.slug}`} className="block">
-        <div className="relative aspect-square overflow-hidden bg-white">
-          {off > 0 && (
-            <span className="absolute left-2.5 top-2.5 z-10 rounded-full bg-sale px-2.5 py-1 text-[10px] font-bold text-white sm:text-xs">
-              -{off}%
-            </span>
-          )}
-          <button
-            onClick={toggleWish}
-            aria-label={wished ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`}
-            aria-pressed={wished}
-            className="absolute right-2.5 top-2.5 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-neutral-800 shadow-sm transition-colors hover:bg-white"
-          >
-            <Heart className={`h-4 w-4 ${wished ? 'fill-sale text-sale' : ''}`} />
-          </button>
-          {!inStock && (
-            <span className="absolute left-1/2 top-3 z-10 -translate-x-1/2 rounded-full bg-ink px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white sm:text-xs">
-              Sold Out
-            </span>
-          )}
+      <div className="relative aspect-square overflow-hidden bg-card">
+        <Link href={href} className="absolute inset-0" aria-label={product.name}>
           <Image
             src={product.image || '/placeholder.svg'}
             alt={product.name}
             fill
-            className={`object-contain p-5 transition-transform duration-500 group-hover:scale-105 ${
-              inStock ? '' : 'opacity-50 grayscale'
-            }`}
             sizes="(max-width: 768px) 50vw, 20vw"
+            className={cn(
+              'object-contain p-3 transition-transform duration-500 group-hover:scale-105',
+              !inStock && 'opacity-50 grayscale',
+            )}
           />
-        </div>
-      </Link>
+        </Link>
 
-      <div className="flex flex-1 flex-col bg-white px-3 pb-3 pt-3 text-center">
-        <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-neutral-500">{product.brand}</p>
-        <Link href={`/product/${product.slug}`} className="mt-1 block">
-          <h3 className="line-clamp-2 min-h-[2.2rem] text-[13px] font-semibold leading-tight text-ink transition-colors group-hover:text-neutral-600 sm:min-h-[2.6rem] sm:text-base">
+        {off > 0 && (
+          <span className="pointer-events-none absolute left-1 top-1 rounded-full bg-sale px-2.5 py-0.5 text-[11px] font-semibold text-primary-foreground md:text-xs">
+            -{off}%
+          </span>
+        )}
+        {!inStock && (
+          <span className="pointer-events-none absolute right-1 top-1 rounded-full bg-primary px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-primary-foreground">
+            Sold out
+          </span>
+        )}
+
+        <div className="absolute inset-x-1 bottom-1 grid grid-cols-4 divide-x divide-border border border-border bg-card shadow-sm transition-all duration-300 md:inset-x-2 md:bottom-2 md:translate-y-3 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100 md:group-focus-within:translate-y-0 md:group-focus-within:opacity-100">
+          {actions.map((a) => (
+            <button
+              key={a.label}
+              type="button"
+              onClick={a.onClick}
+              disabled={a.disabled}
+              aria-label={a.label}
+              title={a.label}
+              aria-pressed={a.pressed}
+              className="flex h-9 items-center justify-center text-foreground transition-colors hover:bg-foreground hover:text-background disabled:cursor-not-allowed disabled:opacity-40 md:h-11"
+            >
+              {a.icon}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex flex-1 flex-col items-center px-1 pb-2 pt-4 text-center">
+        <Link href={href} className="w-full">
+          <h3 className="line-clamp-1 text-[13px] font-normal uppercase tracking-wide text-foreground transition-colors hover:text-muted-foreground md:text-base">
             {product.name}
           </h3>
         </Link>
-
-        <div className="mt-1.5 flex items-center justify-center gap-1.5 text-[11px] text-neutral-500">
-          <span className="flex items-center gap-0.5 text-ink">
-            <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
-            {product.rating.toFixed(1)}
+        <div className="mt-1.5 flex flex-wrap items-baseline justify-center gap-x-2 text-sm md:text-base">
+          <span className="text-sale">
+            {product.variants.length > 1 ? 'From ' : ''}
+            {formatMoney(priced.price)}
           </span>
-          <span aria-hidden>·</span>
-          <span className="truncate">{product.family}</span>
-        </div>
-
-        <div className="mt-1.5 flex items-baseline justify-center gap-2">
-          <span className="text-sm font-bold text-sale sm:text-lg">{formatPrice(priced.price)}</span>
           {priced.compareAt > priced.price && (
-            <span className="text-[11px] text-neutral-400 line-through sm:text-sm">{formatPrice(priced.compareAt)}</span>
-          )}
-        </div>
-
-        <div className="mt-3">
-          {inStock ? (
-            <button
-              onClick={quickAdd}
-              className="flex w-full items-center justify-center gap-2 rounded-md bg-ink py-2.5 text-sm font-bold text-white transition-all hover:bg-ink/85 focus-visible:opacity-100 md:pointer-events-none md:translate-y-1 md:opacity-0 md:group-hover:pointer-events-auto md:group-hover:translate-y-0 md:group-hover:opacity-100 md:group-focus-within:pointer-events-auto md:group-focus-within:translate-y-0 md:group-focus-within:opacity-100"
-              aria-label={`Add ${product.name} to cart`}
-            >
-              <ShoppingBag className="h-4 w-4" /> Quick add
-            </button>
-          ) : (
-            <span className="flex w-full items-center justify-center rounded-md bg-neutral-100 py-2.5 text-sm font-bold text-neutral-400">
-              Out of stock
-            </span>
+            <span className="text-xs text-muted-foreground line-through md:text-sm">{formatMoney(priced.compareAt)}</span>
           )}
         </div>
       </div>
-    </motion.div>
+    </motion.article>
   )
 }

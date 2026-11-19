@@ -17,7 +17,7 @@ export function BrandsView({ initialBrand }: { initialBrand?: string }) {
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 md:px-8">
       <div className="mb-10 text-center">
-        <h1 className="text-4xl font-extrabold text-foreground md:text-5xl">Shop With Brand</h1>
+        <h1 className="text-4xl text-foreground md:text-5xl">Shop With Brand</h1>
         <p className="mt-3 text-sm text-muted-foreground">Explore our curated houses — inspired by the world&apos;s most coveted fragrances.</p>
       </div>
 
@@ -39,7 +39,7 @@ export function BrandsView({ initialBrand }: { initialBrand?: string }) {
         ))}
       </div>
 
-      <h2 className="mb-8 text-center text-2xl font-extrabold text-foreground">{active}</h2>
+      <h2 className="mb-8 text-center text-2xl text-foreground">{active}</h2>
 
       <AnimatePresence mode="wait">
         <motion.div
@@ -48,7 +48,7 @@ export function BrandsView({ initialBrand }: { initialBrand?: string }) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.35 }}
-          className="grid grid-cols-2 gap-x-5 gap-y-10 md:grid-cols-3 lg:grid-cols-4"
+          className="grid grid-cols-2 gap-x-2 gap-y-6 sm:grid-cols-3 md:gap-x-4 lg:grid-cols-4 xl:grid-cols-5"
         >
           {shown.map((p, i) => (
             <ProductCard key={`${active}-${p.slug}`} product={p} index={i} />

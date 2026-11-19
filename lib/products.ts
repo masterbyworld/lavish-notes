@@ -365,3 +365,31 @@ export function discountPercent(p: Pick<Product, 'price' | 'compareAt'>) {
 export function formatPrice(value: number) {
   return `$${value.toFixed(2)} USD`
 }
+
+export function formatMoney(value: number) {
+  return `$${value.toFixed(2)}`
+}
+
+const inStockFirst = (a: Product, b: Product) => Number(b.inStock) - Number(a.inStock)
+
+export const ALL_INVENTORY = 'All Inventory'
+
+export function brandProducts(name: string): Product[] {
+  if (name === ALL_INVENTORY) {
+    return [...products].sort((a, b) => inStockFirst(a, b) || b.reviews - a.reviews)
+  }
+  const key = brands.find((b) => b.name === name)?.key
+  if (!key) return []
+  return products.filter((p) => p.routeKey === key).sort(inStockFirst)
+}
+
+export function brandKey(name: string) {
+  return brands.find((b) => b.name === name)?.key
+}
+
+// Deterministic per-product number so server and client render the same value.
+export function seededNumber(seed: string, min: number, max: number) {
+  let h = 0
+  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0
+  return min + (h % (max - min + 1))
+}

@@ -3,204 +3,167 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
-import { ChevronDown, ChevronUp, ArrowRight, ArrowUp } from 'lucide-react'
+import { ArrowUp, Check, Mail, Plus, Minus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { PolicyModal, type PolicyKey } from '@/components/policy-modal'
-
-function Facebook({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden>
-      <path d="M13.5 21v-8h2.7l.4-3.1h-3.1V7.9c0-.9.25-1.5 1.55-1.5H17V3.6c-.29-.04-1.27-.12-2.41-.12-2.39 0-4.03 1.46-4.03 4.14v2.31H7.85V13h2.71v8h2.94z" />
-    </svg>
-  )
-}
-
-function Instagram({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden>
-      <rect x="3" y="3" width="18" height="18" rx="5" />
-      <circle cx="12" cy="12" r="4" />
-      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
-    </svg>
-  )
-}
+import { FacebookIcon, InstagramIcon } from '@/components/social-icons'
 
 const FACEBOOK_URL = 'https://web.facebook.com/profile.php?id=61594224966224#'
 const INSTAGRAM_URL = 'https://www.instagram.com/lavishnotes'
 
-const socialLinks = [
-  { Icon: Facebook, label: 'Facebook', href: FACEBOOK_URL },
-  { Icon: Instagram, label: 'Instagram', href: INSTAGRAM_URL },
+type FooterLink = { label: string; href?: string; policy?: PolicyKey }
+
+const shopLinks: FooterLink[] = [
+  { label: 'All Fragrances', href: '/shop' },
+  { label: 'Collections', href: '/collections' },
+  { label: 'Brands', href: '/brands' },
+  { label: 'Wishlist', href: '/wishlist' },
 ]
 
-const informationLinks: { label: string; href?: string; policy?: PolicyKey }[] = [
-  { label: 'Search', href: '/shop' },
-  { label: 'Customer Support', href: '/contact' },
+const informationLinks: FooterLink[] = [
   { label: 'Shipping Policy', policy: 'shipping' },
-  { label: 'FAQ', policy: 'faq' },
-  { label: 'Privacy Policy', policy: 'privacy' },
   { label: 'Return & Refund Policy', policy: 'refund' },
+  { label: 'Privacy Policy', policy: 'privacy' },
+  { label: 'FAQ', policy: 'faq' },
 ]
 
 const paymentMethods = [
+  { src: '/payments/visa.svg', alt: 'Visa' },
+  { src: '/payments/mastercard.svg', alt: 'Mastercard' },
   { src: '/payments/american-express.svg', alt: 'American Express' },
+  { src: '/payments/paypal.svg', alt: 'PayPal' },
   { src: '/payments/apple-pay.svg', alt: 'Apple Pay' },
-  { src: '/payments/diners-club.svg', alt: 'Diners Club' },
   { src: '/payments/google-pay.svg', alt: 'Google Pay' },
   { src: '/payments/klarna.svg', alt: 'Klarna' },
-  { src: '/payments/maestro.svg', alt: 'Maestro' },
-  { src: '/payments/mastercard.svg', alt: 'Mastercard' },
-  { src: '/payments/paypal.svg', alt: 'PayPal' },
   { src: '/payments/shopify.svg', alt: 'Shop Pay' },
-  { src: '/payments/visa.svg', alt: 'Visa' },
 ]
 
-function scrollToTop() {
-  window.scrollTo({ top: 0, behavior: 'smooth' })
-}
-
 export function SiteFooter() {
-  // On mobile the columns collapse into accordions. `open` tracks which is
-  // expanded; on desktop (md+) everything is always shown regardless.
-  const [open, setOpen] = useState<string | null>('Subscribe')
-  const toggle = (key: string) => setOpen((prev) => (prev === key ? null : key))
+  const [open, setOpen] = useState<string | null>(null)
   const [activePolicy, setActivePolicy] = useState<PolicyKey | null>(null)
+  const [subscribed, setSubscribed] = useState(false)
+  const toggle = (key: string) => setOpen((prev) => (prev === key ? null : key))
+
+  const renderLinks = (links: FooterLink[]) => (
+    <ul className="flex flex-col gap-3">
+      {links.map((l) => (
+        <li key={l.label}>
+          {l.policy ? (
+            <button type="button" onClick={() => setActivePolicy(l.policy!)} className="text-left text-muted-foreground transition-colors hover:text-foreground">
+              {l.label}
+            </button>
+          ) : (
+            <Link href={l.href!} className="text-muted-foreground transition-colors hover:text-foreground">
+              {l.label}
+            </Link>
+          )}
+        </li>
+      ))}
+    </ul>
+  )
 
   return (
-    <footer className="border-t border-border bg-card text-card-foreground">
-      <div className="mx-auto max-w-7xl px-4 py-14 md:px-8 md:py-16">
-        <div className="grid gap-x-10 gap-y-2 md:grid-cols-[1.5fr_1.3fr_1fr_1fr] md:gap-y-0">
-          {/* Brand */}
-          <FooterSection title="Define Your Scent By Lavish Notes" k="Brand" open={open} toggle={toggle}>
-            <span className="mt-2 flex items-center">
-              <Image
-                src="/lavish-notes-logo-full.png"
-                alt="Lavish Notes"
-                width={200}
-                height={200}
-                className="h-36 w-auto object-contain invert"
-              />
-            </span>
-            <p className="mt-5 max-w-xs text-sm leading-relaxed text-muted-foreground">
-              Premium ingredients, identical scent profiles, and exceptional lasting power — all priced to fit your everyday budget. Your signature scent shouldn&apos;t cost a fortune.
+    <footer className="border-t border-border bg-background pb-20 text-foreground md:pb-0">
+      <div className="border-b border-border bg-muted">
+        <div className="mx-auto flex max-w-3xl flex-col items-center px-4 py-12 text-center md:py-16">
+          <h2 className="text-balance text-3xl md:text-4xl">Join the Scent List</h2>
+          <p className="mt-3 text-pretty leading-relaxed text-muted-foreground">
+            Be the first to hear about new arrivals, restocks, and members-only offers.
+          </p>
+          {subscribed ? (
+            <p className="mt-6 flex items-center gap-2 font-medium" role="status">
+              <Check className="h-5 w-5" /> {"You're on the list — welcome!"}
             </p>
-          </FooterSection>
-
-          {/* Subscribe */}
-          <FooterSection title="Subscribe" k="Subscribe" open={open} toggle={toggle} heading>
-            <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
-              Enter your email below to be the first to know about new collections and product launches.
-            </p>
+          ) : (
             <form
-              onSubmit={(e) => e.preventDefault()}
-              className="mt-5 flex items-center border border-border bg-transparent"
+              onSubmit={(e) => {
+                e.preventDefault()
+                setSubscribed(true)
+              }}
+              className="mt-6 flex w-full max-w-lg flex-col gap-3 sm:flex-row"
             >
-              <label htmlFor="footer-email" className="sr-only">
-                Email address
-              </label>
-              <input
-                id="footer-email"
-                type="email"
-                required
-                placeholder="Enter your email"
-                className="min-w-0 flex-1 bg-transparent px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
-              />
-              <button
-                type="submit"
-                aria-label="Subscribe"
-                className="flex h-11 w-11 shrink-0 items-center justify-center text-foreground transition-opacity hover:opacity-70"
-              >
-                <ArrowRight className="h-4 w-4" />
+              <label htmlFor="footer-email" className="sr-only">Email address</label>
+              <div className="flex flex-1 items-center gap-3 rounded-full border border-border bg-background px-5">
+                <Mail className="h-4 w-4 text-muted-foreground" aria-hidden />
+                <input
+                  id="footer-email"
+                  type="email"
+                  required
+                  autoComplete="email"
+                  placeholder="Your email address"
+                  className="h-12 min-w-0 flex-1 bg-transparent placeholder:text-muted-foreground focus:outline-none"
+                />
+              </div>
+              <button type="submit" className="h-12 rounded-full bg-primary px-8 font-medium text-primary-foreground transition-opacity hover:opacity-85">
+                Subscribe
               </button>
             </form>
-          </FooterSection>
+          )}
+        </div>
+      </div>
 
-          {/* Support */}
-          <FooterSection title="For any Support" k="Support" open={open} toggle={toggle}>
-            <a
-              href="mailto:Support@lavishnotes.com"
-              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-            >
-              Support@lavishnotes.com
-            </a>
+      <div className="mx-auto max-w-7xl px-4 py-10 md:px-8 md:py-16">
+        <div className="grid md:grid-cols-[1.6fr_1fr_1fr_1.2fr] md:gap-10">
+          <div className="flex flex-col items-center pb-8 text-center md:items-start md:pb-0 md:text-left">
+            <Link href="/" aria-label="Lavish Notes home">
+              <Image src="/lavish-notes-logo-full.png" alt="Lavish Notes" width={200} height={200} className="h-28 w-auto object-contain invert" />
+            </Link>
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
+              Premium ingredients, signature scent profiles, and exceptional lasting power — priced for everyday luxury.
+            </p>
             <div className="mt-5 flex gap-3">
-              {socialLinks.map(({ Icon, label, href }) => (
+              {[
+                { Icon: FacebookIcon, label: 'Facebook', href: FACEBOOK_URL },
+                { Icon: InstagramIcon, label: 'Instagram', href: INSTAGRAM_URL },
+              ].map(({ Icon, label, href }) => (
                 <a
                   key={label}
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className="flex h-11 w-11 items-center justify-center rounded-full bg-foreground text-background transition-transform hover:scale-105"
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-border transition-colors hover:border-foreground hover:bg-foreground hover:text-background"
                 >
                   <Icon className="h-4 w-4" />
                 </a>
               ))}
             </div>
-          </FooterSection>
-
-          {/* Information */}
-          <FooterSection title="Information" k="Information" open={open} toggle={toggle}>
-            <ul className="space-y-3 pt-1">
-              {informationLinks.map((l) => (
-                <li key={l.label}>
-                  {l.policy ? (
-                    <button
-                      onClick={() => setActivePolicy(l.policy!)}
-                      className="text-left text-sm text-muted-foreground transition-colors hover:text-foreground"
-                    >
-                      {l.label}
-                    </button>
-                  ) : (
-                    <Link href={l.href!} className="text-sm text-muted-foreground transition-colors hover:text-foreground">
-                      {l.label}
-                    </Link>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </FooterSection>
-        </div>
-
-        {/* Bottom bar: locale + payments */}
-        <div className="mt-12 flex flex-col items-center gap-8 border-t border-border pt-8 md:mt-14 md:flex-row md:justify-between md:gap-6">
-          <div className="flex flex-wrap items-center justify-center gap-6 md:justify-start">
-            <button className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
-              United States (USD $) <ChevronDown className="h-4 w-4" />
-            </button>
-            <button className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
-              English <ChevronDown className="h-4 w-4" />
-            </button>
-            <div className="flex items-center gap-3 md:hidden">
-              <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="text-muted-foreground hover:text-foreground"><Facebook className="h-4 w-4" /></a>
-              <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="text-muted-foreground hover:text-foreground"><Instagram className="h-4 w-4" /></a>
-            </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="flex flex-wrap items-center justify-center gap-2">
-              {paymentMethods.map((p) => (
-                <span
-                  key={p.alt}
-                  className="flex h-7 w-11 items-center justify-center rounded bg-foreground px-1.5"
-                >
-                  <Image src={p.src || '/placeholder.svg'} alt={p.alt} width={40} height={24} className="h-4 w-auto object-contain" />
-                </span>
-              ))}
+          <FooterColumn title="Shop" k="shop" open={open} toggle={toggle}>
+            {renderLinks(shopLinks)}
+          </FooterColumn>
+          <FooterColumn title="Information" k="info" open={open} toggle={toggle}>
+            {renderLinks(informationLinks)}
+          </FooterColumn>
+          <FooterColumn title="Customer Care" k="care" open={open} toggle={toggle}>
+            <div className="flex flex-col gap-3 text-muted-foreground">
+              <a href="mailto:Support@lavishnotes.com" className="hover:text-foreground">Support@lavishnotes.com</a>
+              <Link href="/contact" className="hover:text-foreground">Contact us</Link>
+              <p className="text-sm">Mon – Fri, 9am – 6pm EST</p>
             </div>
-            <button
-              onClick={scrollToTop}
-              aria-label="Back to top"
-              className="ml-1 hidden h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:bg-foreground hover:text-background md:flex"
-            >
-              <ArrowUp className="h-4 w-4" />
-            </button>
-          </div>
+          </FooterColumn>
         </div>
+      </div>
 
-        <p className="mt-8 text-center text-xs text-muted-foreground md:text-left">
-          © {new Date().getFullYear()} Lavish Notes. Designer-inspired.
-        </p>
+      <div className="border-t border-border">
+        <div className="mx-auto flex max-w-7xl flex-col items-center gap-5 px-4 py-6 md:flex-row md:justify-between md:px-8">
+          <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} Lavish Notes. All rights reserved.</p>
+          <ul className="flex flex-wrap items-center justify-center gap-2" aria-label="Accepted payment methods">
+            {paymentMethods.map((p) => (
+              <li key={p.alt} className="flex h-7 w-11 items-center justify-center rounded border border-border bg-background px-1">
+                <Image src={p.src || '/placeholder.svg'} alt={p.alt} width={40} height={24} className="h-4 w-auto object-contain" />
+              </li>
+            ))}
+          </ul>
+          <button
+            type="button"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="flex items-center gap-2 text-sm hover:text-muted-foreground"
+          >
+            Back to top <ArrowUp className="h-4 w-4" />
+          </button>
+        </div>
       </div>
 
       <PolicyModal policy={activePolicy} onClose={() => setActivePolicy(null)} />
@@ -208,37 +171,34 @@ export function SiteFooter() {
   )
 }
 
-function FooterSection({
+function FooterColumn({
   title,
   k,
   open,
   toggle,
-  heading,
   children,
 }: {
   title: string
   k: string
   open: string | null
   toggle: (key: string) => void
-  heading?: boolean
   children: React.ReactNode
 }) {
   const isOpen = open === k
   return (
-    <div className="border-b border-border py-4 md:border-0 md:py-0">
-      <button
-        onClick={() => toggle(k)}
-        className="flex w-full items-center justify-between text-left md:pointer-events-none"
-        aria-expanded={isOpen}
-      >
-        <span className={cn(heading ? 'text-3xl font-medium' : 'text-lg font-medium', 'text-foreground')}>
+    <div className="border-t border-border md:border-0">
+      <h3 className="text-base font-medium md:text-lg">
+        <button
+          type="button"
+          onClick={() => toggle(k)}
+          aria-expanded={isOpen}
+          className="flex w-full items-center justify-between py-4 text-left md:pointer-events-none md:py-0"
+        >
           {title}
-        </span>
-        <span className="md:hidden">
-          {isOpen ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
-        </span>
-      </button>
-      <div className={cn('overflow-hidden md:mt-4 md:block', isOpen ? 'mt-4 block' : 'hidden')}>{children}</div>
+          <span className="md:hidden" aria-hidden>{isOpen ? <Minus className="h-4 w-4" /> : <Plus className="h-4 w-4" />}</span>
+        </button>
+      </h3>
+      <div className={cn('pb-5 md:mt-5 md:block md:pb-0', isOpen ? 'block' : 'hidden')}>{children}</div>
     </div>
   )
 }
