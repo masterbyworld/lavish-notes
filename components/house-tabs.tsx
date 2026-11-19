@@ -45,10 +45,37 @@ export function HouseTabs({
         <div
           role="tablist"
           aria-label={`${title} houses`}
-          className="no-scrollbar -mx-4 mt-8 flex gap-7 overflow-x-auto px-4 md:mx-0 md:mt-10 md:justify-center md:gap-12 md:px-0"
+          className={cn(
+            'no-scrollbar -mx-4 mt-8 flex overflow-x-auto px-4 md:mx-0 md:mt-10 md:justify-center md:px-0',
+            large ? 'gap-7 md:gap-12' : 'gap-2 md:gap-3',
+          )}
         >
           {tabs.map((t) => {
             const selected = t === active
+            if (!large) {
+              return (
+                <button
+                  key={t}
+                  type="button"
+                  role="tab"
+                  id={`${id}-tab-${t}`}
+                  aria-selected={selected}
+                  aria-controls={`${id}-panel`}
+                  onClick={() => setActive(t)}
+                  className={cn(
+                    'relative shrink-0 rounded-full border px-5 py-2.5 text-sm transition-colors md:text-base',
+                    selected
+                      ? 'border-foreground text-background'
+                      : 'border-border text-muted-foreground hover:border-foreground hover:text-foreground',
+                  )}
+                >
+                  {selected && (
+                    <motion.span layoutId={`${id}-pill`} className="absolute inset-0 -z-0 rounded-full bg-foreground" />
+                  )}
+                  <span className="relative">{t}</span>
+                </button>
+              )
+            }
             return (
               <button
                 key={t}
@@ -76,7 +103,7 @@ export function HouseTabs({
           <ProductCarousel
             products={items}
             label={`${active} fragrances`}
-            itemClassName={large ? 'w-1/2 md:w-1/3 lg:w-1/4' : 'w-1/2 sm:w-1/3 lg:w-1/5'}
+            itemClassName="w-1/2 md:w-1/3 lg:w-1/4"
           />
         </div>
 

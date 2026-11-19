@@ -48,7 +48,7 @@ export function BrandsView({ initialBrand }: { initialBrand?: string }) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.35 }}
-          className="grid grid-cols-2 gap-x-2 gap-y-6 sm:grid-cols-3 md:gap-x-4 lg:grid-cols-4 xl:grid-cols-5"
+          className="grid grid-cols-2 gap-x-2 gap-y-6 sm:grid-cols-3 md:gap-x-4 lg:grid-cols-4"
         >
           {shown.map((p, i) => (
             <ProductCard key={`${active}-${p.slug}`} product={p} index={i} />

@@ -4,14 +4,24 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { discountPercent, formatMoney, topWanted } from '@/lib/products'
+import { discountPercent, formatMoney, products, type Product } from '@/lib/products'
 import { useLiveStock } from '@/lib/use-live-stock'
 import { cn } from '@/lib/utils'
 
 const SLIDE_MS = 6000
 
+const MOST_WANTED_SLUGS = [
+  'louis-vuitton-ombre-nomade',
+  'gucci-by-gucci-pour-homme-edt',
+  'creed-orignal-santal',
+  'le-labo-santal-33-edp',
+]
+
+const slides: Product[] = MOST_WANTED_SLUGS.map((slug) => products.find((p) => p.slug === slug)).filter(
+  (p): p is Product => Boolean(p),
+)
+
 export function MostWanted() {
-  const slides = topWanted.slice(0, 4)
   const [index, setIndex] = useState(0)
   const [paused, setPaused] = useState(false)
   const { resolve } = useLiveStock()
