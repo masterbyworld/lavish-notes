@@ -141,33 +141,33 @@ export function ProductDetail({ product }: { product: Product }) {
             {'\u2605 \u2605 \u2605'} Last 30 days orders: {orders} {'\u2605 \u2605 \u2605'}
           </p>
 
-          <div className="flex items-center justify-center gap-3 rounded-lg bg-primary px-4 py-3 text-primary-foreground">
+          <div className="flex items-center gap-3 border-y border-border py-3">
             <span className="flex -space-x-2" aria-hidden>
               {AVATARS.map((a) => (
-                <span key={a} className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-primary bg-primary-foreground text-[10px] font-semibold text-primary">
+                <span key={a} className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-background bg-muted text-[10px] font-semibold">
                   {a}
                 </span>
               ))}
             </span>
-            <span className="font-semibold">10,000+ Happy Customers!</span>
+            <span className="text-sm"><strong className="font-semibold">10,000+</strong> happy customers this year</span>
           </div>
 
-          <div className="rounded-2xl bg-primary p-5 text-primary-foreground shadow-lg">
+          <div className="rounded-2xl border border-border bg-muted p-5">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <span className="flex items-center gap-1.5 rounded-full bg-primary-foreground px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-primary">
+              <span className="flex items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-primary-foreground">
                 <Gift className="h-3.5 w-3.5" /> Limited bundle offer
               </span>
-              <span className="text-xs text-primary-foreground/70">Auto-Applied at Cart</span>
+              <span className="text-xs text-muted-foreground">Auto-applied at cart</span>
             </div>
-            <p className="mt-4 text-lg font-semibold">Buy 2 Fragrances, Get 1 FREE!</p>
-            <p className="mt-1 text-sm text-primary-foreground/70">Add any 3 scents to your cart and get the 3rd one completely on us.</p>
-            <div className="mt-4 grid grid-cols-[1fr_auto_1fr_auto_1fr] items-center rounded-xl border border-primary-foreground/15 px-3 py-4 text-center text-xs font-semibold">
-              {['Scent #1', '+', 'Scent #2', '=', '3rd FREE!'].map((label, i) =>
+            <p className="mt-4 text-lg font-semibold">Buy 2 Fragrances, Get 1 FREE</p>
+            <p className="mt-1 text-sm leading-relaxed text-muted-foreground">Add any 3 scents to your cart and the 3rd one is on us.</p>
+            <div className="mt-4 grid grid-cols-[1fr_auto_1fr_auto_1fr] items-center rounded-xl bg-background px-3 py-4 text-center text-xs font-semibold">
+              {['Scent #1', '+', 'Scent #2', '=', '3rd FREE'].map((label, i) =>
                 i % 2 === 1 ? (
-                  <span key={i} className="text-primary-foreground/50">{label}</span>
+                  <span key={i} className="text-muted-foreground">{label}</span>
                 ) : (
-                  <span key={i} className="flex flex-col items-center gap-2">
-                    <span className={cn('flex h-8 w-8 items-center justify-center rounded-full', i === 4 ? 'bg-primary-foreground text-primary' : 'bg-primary-foreground/15')}>
+                  <span key={i} className={cn('flex flex-col items-center gap-2', i === 4 && 'text-sale')}>
+                    <span className={cn('flex h-9 w-9 items-center justify-center rounded-full', i === 4 ? 'bg-sale text-primary-foreground' : 'bg-muted')}>
                       {i === 4 ? <Gift className="h-4 w-4" /> : <SprayCan className="h-4 w-4" />}
                     </span>
                     {label}
@@ -187,9 +187,9 @@ export function ProductDetail({ product }: { product: Product }) {
             </div>
           </div>
 
-          <div className="flex items-center justify-center gap-3 rounded-full bg-primary px-4 py-3 text-sm text-primary-foreground">
+          <div className="flex items-center justify-center gap-3 rounded-full bg-muted px-4 py-3 text-sm">
             <Truck className="h-5 w-5" />
-            <span><strong className="font-semibold">Free Express Shipping</strong> on Orders Over $80</span>
+            <span><strong className="font-semibold">Free Express Shipping</strong> on orders over $80</span>
           </div>
 
           <ul className="grid grid-cols-3 gap-2 md:gap-3">
@@ -198,8 +198,8 @@ export function ProductDetail({ product }: { product: Product }) {
               { Icon: SprayCan, label: 'Freshly Bottled to Order' },
               { Icon: RotateCcw, label: '30-Day Easy Returns' },
             ].map(({ Icon, label }) => (
-              <li key={label} className="flex flex-col items-center gap-3 rounded-2xl bg-primary px-2 py-5 text-center text-xs font-semibold text-primary-foreground md:text-sm">
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-foreground/15">
+              <li key={label} className="flex flex-col items-center gap-3 rounded-2xl border border-border px-2 py-5 text-center text-xs font-medium md:text-sm">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
                   <Icon className="h-4 w-4" />
                 </span>
                 {label}
