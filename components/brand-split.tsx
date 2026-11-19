@@ -14,7 +14,7 @@ export function BrandSplit() {
         transition={{ duration: 0.6 }}
         className="order-2 md:order-1"
       >
-        <h2 className="text-balance text-4xl font-medium leading-tight text-foreground md:text-5xl">
+        <h2 className="text-balance text-4xl font-extrabold leading-tight text-foreground md:text-5xl">
           Define Your Presence with Parfums de Marly.
         </h2>
         <p className="mt-6 max-w-md text-pretty leading-relaxed text-muted-foreground">

@@ -14,7 +14,7 @@ export function UrgencySection() {
         transition={{ duration: 0.5 }}
         className="mx-auto max-w-3xl px-4 text-center md:px-8"
       >
-        <h2 className="text-4xl font-medium text-foreground md:text-5xl">Hurry! Prices Increase In…</h2>
+        <h2 className="text-4xl font-extrabold text-foreground md:text-5xl">Hurry! Prices Increase In…</h2>
         <p className="mt-3 text-muted-foreground">Don&apos;t miss out on this limited-time offer</p>
         <div className="mt-8">
           <CountdownBoxes />

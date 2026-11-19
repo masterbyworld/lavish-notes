@@ -9,7 +9,7 @@ export function FragranceCollection() {
   return (
     <section className="mx-auto max-w-7xl px-4 py-16 md:px-8">
       <div className="text-center">
-        <h2 className="text-4xl font-medium text-foreground md:text-5xl">The Fragrance Collection</h2>
+        <h2 className="text-4xl font-extrabold text-foreground md:text-5xl">The Fragrance Collection</h2>
         <p className="mx-auto mt-4 max-w-2xl text-pretty text-muted-foreground">
           &quot;Buy 2, Get 1 FREE! Add any 3 fragrances to your cart and pay only for 2. Limited time offer at Lavish Notes.&quot;
         </p>

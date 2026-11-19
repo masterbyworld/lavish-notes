@@ -35,7 +35,7 @@ export function RecentlyViewed({ currentSlug }: { currentSlug: string }) {
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-16 md:px-8">
-      <h2 className="mb-8 text-3xl font-medium text-foreground md:text-4xl">Recently Viewed Products</h2>
+      <h2 className="mb-8 text-3xl font-extrabold text-foreground md:text-4xl">Recently Viewed Products</h2>
       <div className="grid grid-cols-2 gap-x-5 gap-y-10 md:grid-cols-4">
         {items.map((p, i) => (
           <ProductCard key={p.slug} product={p} index={i} />

@@ -6,7 +6,7 @@ import type { Product } from '@/lib/products'
 
 const TABS = [
   { id: 'desc', label: 'Product description' },
-  { id: 'ship', label: 'Shipping-Return' },
+  { id: 'ship', label: 'Fast & Reliable Delivery' },
 ] as const
 
 type TabId = (typeof TABS)[number]['id']
@@ -16,14 +16,16 @@ export function ProductTabs({ product }: { product: Product }) {
   const hasNotes = product.notes.top.length + product.notes.heart.length + product.notes.base.length > 0
 
   return (
-    <section className="mx-auto max-w-4xl px-4 py-16 md:px-8">
-      <div className="flex items-center justify-center gap-10 border-b border-border">
+    <section className="mx-auto max-w-7xl px-4 py-12 md:px-8 md:py-16">
+      <div role="tablist" className="no-scrollbar flex items-center gap-8 overflow-x-auto border-b border-border md:justify-center md:gap-16">
         {TABS.map((t) => (
           <button
             key={t.id}
+            role="tab"
+            aria-selected={tab === t.id}
             onClick={() => setTab(t.id)}
-            className={`relative -mb-px pb-3 text-lg transition-colors ${
-              tab === t.id ? 'font-semibold text-foreground' : 'text-muted-foreground hover:text-foreground'
+            className={`relative -mb-px shrink-0 pb-3 text-base transition-colors md:text-xl ${
+              tab === t.id ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             {t.label}

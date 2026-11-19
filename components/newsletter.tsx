@@ -17,7 +17,7 @@ export function Newsletter() {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="text-3xl font-medium text-foreground md:text-4xl">Get 10% off your first order</h2>
+          <h2 className="text-3xl font-extrabold text-foreground md:text-4xl">Get 10% off your first order</h2>
           <p className="mt-3 text-sm text-muted-foreground">
             Subscribe for early access to new arrivals, exclusive drops and members-only pricing.
           </p>

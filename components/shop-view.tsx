@@ -144,7 +144,7 @@ export function ShopView({
       )}
 
       <div className="mb-8 text-center">
-        <h1 className="text-4xl font-medium text-foreground md:text-5xl">
+        <h1 className="text-4xl text-foreground md:text-5xl">
           {searchMode
             ? `Found ${visible.length} result${visible.length === 1 ? '' : 's'} for "${query}"`
             : collection
@@ -292,7 +292,7 @@ export function ShopView({
             : 'No fragrances match your filters. Try adjusting your selection.'}
         </p>
       ) : (
-        <div className="grid grid-cols-2 gap-x-5 gap-y-10 md:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-x-2 gap-y-6 sm:grid-cols-3 md:gap-x-4 lg:grid-cols-4 xl:grid-cols-5">
           {visible.map((p, i) => (
             <ProductCard key={p.slug} product={p} index={i} />
           ))}
@@ -302,12 +302,12 @@ export function ShopView({
       {searchMode && related.length > 0 && (
         <section className="mt-20 border-t border-border pt-14">
           <div className="mb-8 text-center">
-            <h2 className="text-3xl font-medium text-foreground md:text-4xl">You Might Also Like</h2>
+            <h2 className="text-3xl text-foreground md:text-4xl">You Might Also Like</h2>
             <p className="mt-2 text-sm text-muted-foreground">
               Similar fragrances shoppers love, based on your search
             </p>
           </div>
-          <div className="grid grid-cols-2 gap-x-5 gap-y-10 md:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-x-2 gap-y-6 sm:grid-cols-3 md:gap-x-4 lg:grid-cols-4 xl:grid-cols-5">
             {related.map((p, i) => (
               <ProductCard key={p.slug} product={p} index={i} />
             ))}

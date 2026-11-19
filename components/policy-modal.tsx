@@ -129,7 +129,7 @@ export function PolicyModal({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="sticky top-0 z-10 flex items-center justify-between rounded-t-lg border-b border-foreground/10 bg-background px-6 py-4">
-          <h2 className="text-lg font-medium text-foreground">{data.title}</h2>
+          <h2 className="text-lg font-extrabold text-foreground">{data.title}</h2>
           <button
             onClick={onClose}
             aria-label="Close"

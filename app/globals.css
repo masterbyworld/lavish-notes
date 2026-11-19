@@ -26,9 +26,10 @@
   --color-sale: var(--sale);
 
   --color-ink: var(--ink);
+  --color-trust: var(--trust);
 
-  /* Single typeface site-wide: headings and body both use Figtree. */
-  --font-sans: var(--font-figtree), 'Avenir Next', Avenir, ui-sans-serif, system-ui, sans-serif;
+  /* Single typeface site-wide: headings and body both use Jost. */
+  --font-sans: var(--font-jost), 'Avenir Next', Avenir, ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-sans);
 
   --radius-sm: calc(var(--radius) * 0.6);
@@ -39,31 +40,31 @@
 }
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
   --radius: 0.5rem;
 
-  /* Lavish Notes — deep black storefront */
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.97 0 0);
+  /* Lavish Notes — white storefront, black design elements */
+  --background: #ffffff;
+  --foreground: #111111;
 
-  --card: oklch(0.178 0 0);
-  --card-foreground: oklch(0.97 0 0);
+  --card: #ffffff;
+  --card-foreground: #111111;
 
-  --popover: oklch(0.178 0 0);
-  --popover-foreground: oklch(0.97 0 0);
+  --popover: #ffffff;
+  --popover-foreground: #111111;
 
-  /* white primary buttons on black for a premium contrast */
-  --primary: oklch(0.97 0 0);
-  --primary-foreground: oklch(0.145 0 0);
+  /* black primary buttons on white */
+  --primary: #111111;
+  --primary-foreground: #ffffff;
 
-  --secondary: oklch(0.225 0 0);
-  --secondary-foreground: oklch(0.97 0 0);
+  --secondary: #f4f4f4;
+  --secondary-foreground: #111111;
 
-  --muted: oklch(0.225 0 0);
-  --muted-foreground: oklch(0.68 0 0);
+  --muted: #f4f4f4;
+  --muted-foreground: #5c5c5c;
 
-  --accent: oklch(0.245 0 0);
-  --accent-foreground: oklch(0.97 0 0);
+  --accent: #ededed;
+  --accent-foreground: #111111;
 
   /* red urgency / sale accent */
   --sale: #d6453d;
@@ -72,9 +73,12 @@
   /* near-black text on white product cards */
   --ink: #111111;
 
-  --border: oklch(0.27 0 0);
-  --input: oklch(0.27 0 0);
-  --ring: oklch(0.45 0 0);
+  /* review-score green */
+  --trust: #00b67a;
+
+  --border: #e2e2e2;
+  --input: #e2e2e2;
+  --ring: #111111;
 }
 
 @layer base {
@@ -82,10 +86,13 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-background text-foreground font-sans font-normal;
   }
-  h1, h2, h3, h4 {
-    @apply font-sans tracking-tight;
+  h1, h2 {
+    @apply font-sans font-normal tracking-tight;
+  }
+  h3, h4 {
+    @apply font-sans font-medium;
   }
   .font-display {
     font-family: var(--font-sans);

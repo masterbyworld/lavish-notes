@@ -26,7 +26,7 @@ export function MobileTabBar() {
             </span>
           )}
         </button>
-        <Link href="/shop" aria-label="Wishlist" className="flex flex-col items-center justify-center gap-1 py-3 text-foreground">
+        <Link href="/wishlist" aria-label="Wishlist" className="flex flex-col items-center justify-center gap-1 py-3 text-foreground">
           <Heart className="h-5 w-5" />
         </Link>
         <Link href="/shop" aria-label="Search" className="flex flex-col items-center justify-center gap-1 py-3 text-foreground">

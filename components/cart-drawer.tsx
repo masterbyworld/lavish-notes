@@ -45,7 +45,7 @@ export function CartDrawer() {
             aria-label="Shopping cart"
           >
             <div className="flex items-center justify-between px-6 pb-4 pt-6">
-              <h2 className="text-2xl font-medium text-foreground">Shopping Cart</h2>
+              <h2 className="text-2xl font-extrabold text-foreground">Shopping Cart</h2>
               <button onClick={closeCart} aria-label="Close cart" className="text-foreground/70 hover:text-foreground">
                 <X className="h-6 w-6" />
               </button>

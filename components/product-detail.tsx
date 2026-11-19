@@ -2,15 +2,31 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Minus, Plus, Star, Truck, Clock, PackageCheck } from 'lucide-react'
-import { formatPrice, discountPercent, type Product } from '@/lib/products'
-import { useCart } from '@/lib/cart-context'
-import { useLiveStock } from '@/lib/use-live-stock'
-import { trackViewItem, trackAddToCart } from '@/lib/tracking'
+import { useEffect, useRef, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import {
+  ArrowUpDown,
+  ChevronRight,
+  Gift,
+  Heart,
+  HelpCircle,
+  Package,
+  RotateCcw,
+  Share2,
+  ShieldCheck,
+  SprayCan,
+  Star,
+  Truck,
+} from 'lucide-react'
+import { formatMoney, seededNumber, type Product } from '@/lib/products'
+import { useProductPurchase } from '@/lib/use-product-purchase'
+import { useSaved } from '@/lib/saved-context'
+import { trackViewItem } from '@/lib/tracking'
+import { ProductGallery } from '@/components/winning-spotlight'
+import { QuantityStepper, SizePicker } from '@/components/purchase-controls'
+import { cn } from '@/lib/utils'
 
-const GALLERY_ROTATE_MS = 3000
+const AVATARS = ['IC', 'JM', 'NS']
 
 function deliveryWindow() {
   const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', day: '2-digit' })
@@ -21,240 +37,236 @@ function deliveryWindow() {
   return `${fmt(from)} - ${fmt(to)}`
 }
 
-export function ProductDetail({ product }: { product: Product }) {
-  const { addItem } = useCart()
-  const { resolve } = useLiveStock()
-  const [variantSku, setVariantSku] = useState(product.blackSku)
-  const variant = product.variants.find((v) => v.sku === variantSku) ?? product.variants[0]
-  const liveFor = (v: (typeof product.variants)[number]) =>
-    resolve(v.sku, { price: v.price, compareAt: v.compareAt, inStock: v.inStock })
-  const live = variant
-    ? liveFor(variant)
-    : { price: product.price, compareAt: product.compareAt, inStock: product.inStock }
-  const inStock = live.inStock
-  const sizeLabel = variant?.sizeLabel ?? product.sizeLabel
-  const [qty, setQty] = useState(1)
-  const [active, setActive] = useState(0)
-  const [delivery, setDelivery] = useState('')
+export function TrustStars({ className }: { className?: string }) {
+  return (
+    <span className={cn('flex gap-0.5', className)} aria-hidden>
+      {Array.from({ length: 5 }).map((_, i) => (
+        <span key={i} className="flex h-5 w-5 items-center justify-center bg-trust">
+          <Star className="h-3.5 w-3.5 fill-primary-foreground text-primary-foreground" />
+        </span>
+      ))}
+    </span>
+  )
+}
 
-  // Two-face gallery: auto-rotate through the product images.
-  const gallery = product.images.length > 0 ? product.images : [product.image]
+export function ProductDetail({ product }: { product: Product }) {
+  const p = useProductPurchase(product)
+  const { isWished, toggleWish, isCompared, toggleCompare } = useSaved()
+  const [delivery, setDelivery] = useState('')
+  const [shared, setShared] = useState(false)
+  const [stickyVisible, setStickyVisible] = useState(false)
+  const ctaRef = useRef<HTMLDivElement>(null)
+  const orders = seededNumber(product.slug, 1800, 3900)
+  const wished = isWished(product.slug)
+
   useEffect(() => {
     setDelivery(deliveryWindow())
-    if (gallery.length < 2) return
-    const id = setInterval(() => setActive((a) => (a + 1) % gallery.length), GALLERY_ROTATE_MS)
-    return () => clearInterval(id)
-  }, [gallery.length])
-
-  const unitPrice = live.price
-  const compareAt = live.compareAt
-  const priced = {
-    ...product,
-    price: unitPrice,
-    compareAt,
-    whiteSku: variant?.whiteSku ?? product.whiteSku,
-    blackSku: variant?.sku ?? product.blackSku,
-  }
-  const off = discountPercent(priced)
-
-  // GA4 `view_item` (+ Meta ViewContent) once per product view.
-  useEffect(() => {
     trackViewItem(product)
   }, [product])
 
-  const add = () => {
-    if (!inStock) return
-    addItem(
-      {
-        id: `${product.slug}-${priced.blackSku}`,
-        slug: product.slug,
-        name: product.name,
-        image: product.image,
-        size: sizeLabel,
-        price: unitPrice,
-        whiteSku: priced.whiteSku,
-        blackSku: priced.blackSku,
-      },
-      qty,
-    )
-    trackAddToCart(priced, qty, sizeLabel)
+  useEffect(() => {
+    const el = ctaRef.current
+    if (!el) return
+    const io = new IntersectionObserver(([entry]) => setStickyVisible(!entry.isIntersecting && entry.boundingClientRect.top < 0))
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
+
+  async function share() {
+    const url = window.location.href
+    try {
+      if (navigator.share) await navigator.share({ title: product.name, url })
+      else await navigator.clipboard.writeText(url)
+      setShared(true)
+      setTimeout(() => setShared(false), 2000)
+    } catch {
+      /* user dismissed the share sheet */
+    }
   }
 
+  const addButton = (
+    <button
+      type="button"
+      onClick={p.add}
+      disabled={!p.inStock}
+      className="h-12 flex-1 rounded-full border border-foreground text-base font-medium transition-colors hover:bg-foreground hover:text-background disabled:cursor-not-allowed disabled:border-border disabled:text-muted-foreground disabled:hover:bg-transparent"
+    >
+      {p.inStock ? 'Add to cart' : 'Sold out'}
+    </button>
+  )
+
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 md:px-8">
-      <nav className="mb-8 flex items-center gap-2 text-xs text-muted-foreground">
-        <Link href="/" className="hover:text-foreground">Home</Link>
-        <span>/</span>
-        <Link href={`/brands?b=${encodeURIComponent(product.brand)}`} className="hover:text-foreground">{product.brand}</Link>
-        <span>/</span>
-        <span className="text-foreground">{product.name}</span>
+    <section className="mx-auto max-w-7xl px-4 pb-10 pt-6 md:px-8 md:pt-10">
+      <nav aria-label="Breadcrumb" className="mb-6 flex items-center justify-center gap-3 text-sm md:mb-10 md:text-base">
+        <Link href="/" className="hover:text-muted-foreground">Home</Link>
+        <ChevronRight className="h-3.5 w-3.5" />
+        <Link href="/shop" className="hover:text-muted-foreground">Catalog</Link>
+        <ChevronRight className="h-3.5 w-3.5" />
+        <span aria-current="page" className="line-clamp-1 text-muted-foreground">{product.name}</span>
       </nav>
 
-      <div className="grid gap-10 lg:grid-cols-2">
-        <div className="lg:sticky lg:top-24 lg:self-start">
-          <div className="relative aspect-square overflow-hidden bg-muted">
-            {off > 0 && (
-              <span className="absolute left-4 top-4 z-10 rounded-full bg-sale px-3 py-1 text-xs font-semibold text-white">
-                -{off}%
-              </span>
-            )}
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={active}
-                initial={{ opacity: 0, scale: 1.02 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.5 }}
-                className="absolute inset-0"
-              >
-                <Image
-                  src={gallery[active] || '/placeholder.svg'}
-                  alt={product.name}
-                  fill
-                  priority
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-contain p-10"
-                />
-              </motion.div>
-            </AnimatePresence>
-          </div>
-
-          {gallery.length > 1 && (
-            <div className="mt-4 flex gap-3">
-              {gallery.slice(0, 5).map((img, i) => (
-                <button
-                  key={img + i}
-                  onClick={() => setActive(i)}
-                  className={`relative h-20 w-20 shrink-0 overflow-hidden border bg-muted transition-colors ${
-                    i === active ? 'border-foreground' : 'border-border hover:border-foreground/50'
-                  }`}
-                  aria-label={`View image ${i + 1}`}
-                >
-                  <Image src={img || '/placeholder.svg'} alt="" fill sizes="80px" className="object-contain p-2" />
-                </button>
-              ))}
-            </div>
-          )}
+      <div className="grid items-start gap-8 lg:grid-cols-2 lg:gap-14">
+        <div className="lg:sticky lg:top-28">
+          <ProductGallery product={product} thumbsSide />
         </div>
 
-        <div>
-          <div className="flex items-center gap-2">
-            <div className="flex">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Star key={i} className={`h-4 w-4 ${i < product.rating ? 'fill-sale text-sale' : 'text-muted-foreground/30'}`} />
-              ))}
-            </div>
-            <span className="text-sm text-muted-foreground">
-              <span className="font-semibold text-foreground">4.9/5</span> rating based on{' '}
-              <span className="font-semibold text-foreground">18,000+</span> reviews
+        <div className="flex flex-col gap-6">
+          <div className="flex items-start justify-between gap-4">
+            <h1 className="text-pretty text-3xl md:text-4xl">{product.name}</h1>
+            <button
+              type="button"
+              onClick={() => toggleWish(product.slug)}
+              aria-pressed={wished}
+              aria-label={wished ? 'Remove from wishlist' : 'Add to wishlist'}
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-border transition-colors hover:border-foreground"
+            >
+              <Heart className={cn('h-5 w-5', wished && 'fill-sale text-sale')} />
+            </button>
+          </div>
+
+          <a href="#reviews" className="flex flex-wrap items-center gap-3 text-sm md:text-base">
+            <TrustStars />
+            <span>
+              Trustscore <strong className="font-semibold">4.9</strong> | <strong className="font-semibold">1,500+</strong> reviews
             </span>
+          </a>
+
+          <div className="flex items-baseline gap-3">
+            <span className="text-3xl text-sale">{formatMoney(p.price)}</span>
+            {p.compareAt > p.price && <span className="text-muted-foreground line-through">{formatMoney(p.compareAt)}</span>}
+            {p.off > 0 && <span className="rounded-full bg-sale px-2.5 py-0.5 text-xs font-semibold text-primary-foreground">Save {p.off}%</span>}
           </div>
 
-          <p className="mt-3 text-xs uppercase tracking-[0.2em] text-muted-foreground">{product.inspiredBy}</p>
-          <h1 className="mt-1 text-3xl font-medium text-foreground md:text-4xl">{product.name}</h1>
+          <p className="self-center bg-sale/10 px-3 py-1 text-xs font-semibold text-sale md:text-sm">
+            {'\u2605 \u2605 \u2605'} Last 30 days orders: {orders} {'\u2605 \u2605 \u2605'}
+          </p>
 
-          <div className="mt-5 flex items-center gap-3">
-            <span className="text-3xl font-semibold text-sale">{formatPrice(unitPrice)}</span>
-            {compareAt > unitPrice && (
-              <span className="text-lg text-muted-foreground line-through">{formatPrice(compareAt)}</span>
-            )}
-            {off > 0 && (
-              <span className="rounded-full bg-sale px-2.5 py-1 text-xs font-semibold text-white">SAVE {off}%</span>
-            )}
+          <div className="flex items-center justify-center gap-3 rounded-lg bg-primary px-4 py-3 text-primary-foreground">
+            <span className="flex -space-x-2" aria-hidden>
+              {AVATARS.map((a) => (
+                <span key={a} className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-primary bg-primary-foreground text-[10px] font-semibold text-primary">
+                  {a}
+                </span>
+              ))}
+            </span>
+            <span className="font-semibold">10,000+ Happy Customers!</span>
           </div>
-          <p className="mt-1 text-sm text-muted-foreground">Tax included.</p>
 
-          <div className="mt-6 flex items-center gap-3 border border-border p-4">
-            <Truck className="h-6 w-6 shrink-0 text-foreground" />
-            <div>
-              <p className="text-sm font-semibold text-foreground">FREE SHIPPING IN USA</p>
-              <p className="text-xs text-muted-foreground">Standard delivery (3-5 business days)</p>
+          <div className="rounded-2xl bg-primary p-5 text-primary-foreground shadow-lg">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="flex items-center gap-1.5 rounded-full bg-primary-foreground px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-primary">
+                <Gift className="h-3.5 w-3.5" /> Limited bundle offer
+              </span>
+              <span className="text-xs text-primary-foreground/70">Auto-Applied at Cart</span>
             </div>
-          </div>
-
-          <div className="mt-4 overflow-hidden rounded-md">
-            <div className="flex items-center gap-2 bg-sale px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-white">
-              <Clock className="h-4 w-4" /> Today&apos;s Special
-            </div>
-            <div className="border border-t-0 border-border px-4 py-3">
-              <p className="text-sm text-foreground">
-                Limited Offer: <span className="font-semibold">Buy 2</span> &amp; Get{' '}
-                <span className="font-bold text-sale">1 FREE ON ALL PRODUCTS</span>
-              </p>
-              <p className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-sale">
-                <Clock className="h-4 w-4" /> Claim this deal before the timer runs out.
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-7">
-            <p className="mb-3 text-sm font-medium text-foreground">Size</p>
-            <div role="radiogroup" aria-label="Size" className="flex flex-wrap gap-3">
-              {product.variants.map((v) => {
-                const selected = v.sku === variant?.sku
-                const state = liveFor(v)
-                return (
-                  <button
-                    key={v.sku}
-                    type="button"
-                    role="radio"
-                    aria-checked={selected}
-                    onClick={() => setVariantSku(v.sku)}
-                    className={`inline-flex items-center gap-3 border px-6 py-3 transition-colors ${
-                      selected
-                        ? 'border-foreground bg-foreground text-background'
-                        : 'border-border bg-background text-foreground hover:border-foreground'
-                    } ${state.inStock ? '' : 'opacity-50'}`}
-                  >
-                    <span className="text-sm font-semibold">{v.sizeLabel}</span>
-                    <span className={`text-xs ${selected ? 'text-background/70' : 'text-muted-foreground'}`}>
-                      {state.inStock ? formatPrice(state.price) : 'Sold out'}
+            <p className="mt-4 text-lg font-semibold">Buy 2 Fragrances, Get 1 FREE!</p>
+            <p className="mt-1 text-sm text-primary-foreground/70">Add any 3 scents to your cart and get the 3rd one completely on us.</p>
+            <div className="mt-4 grid grid-cols-[1fr_auto_1fr_auto_1fr] items-center rounded-xl border border-primary-foreground/15 px-3 py-4 text-center text-xs font-semibold">
+              {['Scent #1', '+', 'Scent #2', '=', '3rd FREE!'].map((label, i) =>
+                i % 2 === 1 ? (
+                  <span key={i} className="text-primary-foreground/50">{label}</span>
+                ) : (
+                  <span key={i} className="flex flex-col items-center gap-2">
+                    <span className={cn('flex h-8 w-8 items-center justify-center rounded-full', i === 4 ? 'bg-primary-foreground text-primary' : 'bg-primary-foreground/15')}>
+                      {i === 4 ? <Gift className="h-4 w-4" /> : <SprayCan className="h-4 w-4" />}
                     </span>
-                  </button>
-                )
-              })}
+                    {label}
+                  </span>
+                ),
+              )}
             </div>
           </div>
 
-          <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-            <div className="flex items-center justify-between bg-muted px-2 sm:w-36">
-              <button onClick={() => setQty((q) => Math.max(1, q - 1))} disabled={!inStock} className="flex h-12 w-11 items-center justify-center text-foreground/70 hover:text-foreground disabled:opacity-40" aria-label="Decrease quantity">
-                <Minus className="h-4 w-4" />
-              </button>
-              <span className="w-8 text-center font-medium tabular-nums">{qty}</span>
-              <button onClick={() => setQty((q) => Math.min(20, q + 1))} disabled={!inStock} className="flex h-12 w-11 items-center justify-center text-foreground/70 hover:text-foreground disabled:opacity-40" aria-label="Increase quantity">
-                <Plus className="h-4 w-4" />
-              </button>
+          <SizePicker product={product} purchase={p} />
+
+          <div ref={ctaRef}>
+            <p className="mb-3 font-medium">Quantity</p>
+            <div className="flex gap-3">
+              <QuantityStepper value={p.qty} onChange={p.setQty} disabled={!p.inStock} />
+              {addButton}
             </div>
-            {inStock ? (
-              <button
-                onClick={add}
-                className="flex-1 bg-primary py-4 text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.01]"
-              >
-                Add to cart · {formatPrice(unitPrice * qty)}
-              </button>
-            ) : (
-              <button
-                disabled
-                className="flex-1 cursor-not-allowed bg-muted py-4 text-sm font-semibold uppercase tracking-wide text-muted-foreground"
-              >
-                Out of stock
-              </button>
-            )}
           </div>
 
-          <div className="mt-6 space-y-2 text-sm text-muted-foreground">
-            <p className="flex items-center gap-2">
-              <PackageCheck className="h-5 w-5 text-foreground" />
-              <span><span className="font-semibold text-foreground">Estimated Delivery:</span> {delivery || '—'}</span>
+          <div className="flex items-center justify-center gap-3 rounded-full bg-primary px-4 py-3 text-sm text-primary-foreground">
+            <Truck className="h-5 w-5" />
+            <span><strong className="font-semibold">Free Express Shipping</strong> on Orders Over $80</span>
+          </div>
+
+          <ul className="grid grid-cols-3 gap-2 md:gap-3">
+            {[
+              { Icon: ShieldCheck, label: 'Premium Quality Fragrances' },
+              { Icon: SprayCan, label: 'Freshly Bottled to Order' },
+              { Icon: RotateCcw, label: '30-Day Easy Returns' },
+            ].map(({ Icon, label }) => (
+              <li key={label} className="flex flex-col items-center gap-3 rounded-2xl bg-primary px-2 py-5 text-center text-xs font-semibold text-primary-foreground md:text-sm">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-foreground/15">
+                  <Icon className="h-4 w-4" />
+                </span>
+                {label}
+              </li>
+            ))}
+          </ul>
+
+          <div className="flex flex-col gap-2 text-sm md:text-base">
+            <p className="flex items-center gap-3">
+              <Package className="h-5 w-5" />
+              <span><strong className="font-medium">Free Shipping & Returns:</strong> On orders over $80</span>
             </p>
-            <p className="flex items-center gap-2">
-              <Truck className="h-5 w-5 text-foreground" />
-              Enjoy free shipping on all orders over $80.
+            <p className="flex items-center gap-3 text-muted-foreground">
+              <Truck className="h-5 w-5" />
+              <span><strong className="font-medium text-foreground">Estimated Delivery:</strong> {delivery || '\u2014'}</span>
             </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-x-8 gap-y-3 border-b border-border pb-6">
+            <button type="button" onClick={() => toggleCompare(product.slug)} aria-pressed={isCompared(product.slug)} className="flex items-center gap-2 hover:text-muted-foreground">
+              <ArrowUpDown className="h-5 w-5" /> {isCompared(product.slug) ? 'Added to compare' : 'Compare'}
+            </button>
+            <Link href={`/contact?product=${encodeURIComponent(product.name)}`} className="flex items-center gap-2 hover:text-muted-foreground">
+              <HelpCircle className="h-5 w-5" /> Ask a question
+            </Link>
+            <button type="button" onClick={share} className="flex items-center gap-2 hover:text-muted-foreground">
+              <Share2 className="h-5 w-5" /> {shared ? 'Link copied' : 'Share'}
+            </button>
           </div>
         </div>
       </div>
-    </div>
+
+      <AnimatePresence>
+        {stickyVisible && (
+          <motion.div
+            initial={{ y: '100%' }}
+            animate={{ y: 0 }}
+            exit={{ y: '100%' }}
+            transition={{ duration: 0.25 }}
+            className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background shadow-[0_-6px_20px_rgba(0,0,0,0.06)]"
+          >
+            <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 md:px-8">
+              <div className="relative h-12 w-12 shrink-0 md:h-14 md:w-14">
+                <Image src={product.image || '/placeholder.svg'} alt="" fill sizes="56px" className="object-contain" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="line-clamp-1 text-sm md:text-base">{product.name}</p>
+                <p className="flex items-baseline gap-2 text-sm">
+                  <span className="text-sale">{formatMoney(p.price)}</span>
+                  {p.compareAt > p.price && <span className="text-xs text-muted-foreground line-through">{formatMoney(p.compareAt)}</span>}
+                </p>
+              </div>
+              <div className="hidden sm:block">
+                <QuantityStepper value={p.qty} onChange={p.setQty} disabled={!p.inStock} compact />
+              </div>
+              <button
+                type="button"
+                onClick={p.add}
+                disabled={!p.inStock}
+                className="h-11 shrink-0 rounded-full bg-primary px-6 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-85 disabled:opacity-40 md:px-10"
+              >
+                {p.inStock ? 'Add to cart' : 'Sold out'}
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </section>
   )
 }

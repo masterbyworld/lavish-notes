@@ -13,7 +13,7 @@ export function ExploreCategories() {
   return (
     <section className="mx-auto max-w-7xl px-4 py-16 md:px-8">
       <div className="mb-10 flex items-center justify-between">
-        <h2 className="text-3xl font-medium text-foreground md:text-4xl">Explore Categories</h2>
+        <h2 className="text-3xl font-extrabold text-foreground md:text-4xl">Explore Categories</h2>
       </div>
 
       <div className="group relative overflow-hidden">

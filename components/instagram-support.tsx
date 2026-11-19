@@ -13,7 +13,7 @@ export function InstagramSupport() {
         className="text-center"
       >
         <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground">Response Time 1 to 4 Hours</p>
-        <h2 className="mx-auto mt-4 max-w-3xl text-balance text-4xl font-medium text-foreground md:text-5xl">
+        <h2 className="mx-auto mt-4 max-w-3xl text-balance text-4xl font-extrabold text-foreground md:text-5xl">
           Visit Lavish Notes Instagram For Any Support
         </h2>
         <a
