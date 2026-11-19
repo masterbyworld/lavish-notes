@@ -23,7 +23,7 @@ export default function HomePage() {
         title="Shop by Iconic Houses"
         subtitle="Browse luxury fragrances categorized by world-renowned perfumery houses. Premium scents delivered right to your door."
         tabs={HOUSES}
-        defaultTab="Tom Ford"
+        defaultTab="Parfums de Marly"
       />
       <HouseTabs id="scents" title="Explore Iconic Scents" eyebrowFromBrand tabs={SCENT_TABS} defaultTab="Bond No. 9" large />
       <WinningSpotlight />

@@ -47,39 +47,41 @@ export function ProductCarousel({
   }
 
   return (
-    <div className="relative" role="region" aria-roledescription="carousel" aria-label={label}>
-      <div
-        ref={trackRef}
-        onScroll={measure}
-        className="no-scrollbar -mx-1 flex snap-x snap-mandatory overflow-x-auto md:-mx-2"
-      >
-        {products.map((p, i) => (
-          <div key={p.slug} className={cn('shrink-0 snap-start px-1 md:px-2', itemClassName)}>
-            <ProductCard product={p} index={i} />
-          </div>
-        ))}
-      </div>
+    <div role="region" aria-roledescription="carousel" aria-label={label}>
+      <div className={cn('relative', pages > 1 && 'md:px-14')}>
+        <div
+          ref={trackRef}
+          onScroll={measure}
+          className="no-scrollbar -mx-1 flex snap-x snap-mandatory overflow-x-auto md:-mx-2"
+        >
+          {products.map((p, i) => (
+            <div key={p.slug} className={cn('shrink-0 snap-start px-1 md:px-3', itemClassName)}>
+              <ProductCard product={p} index={i} />
+            </div>
+          ))}
+        </div>
 
-      {pages > 1 && (
-        <>
-          <button
-            type="button"
-            onClick={() => goTo(page - 1)}
-            aria-label="Previous products"
-            className="absolute -left-3 top-[38%] hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-sm transition-colors hover:bg-foreground hover:text-background md:flex lg:-left-6 lg:h-14 lg:w-14"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-          <button
-            type="button"
-            onClick={() => goTo(page + 1)}
-            aria-label="Next products"
-            className="absolute -right-3 top-[38%] hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-sm transition-colors hover:bg-foreground hover:text-background md:flex lg:-right-6 lg:h-14 lg:w-14"
-          >
-            <ChevronRight className="h-5 w-5" />
-          </button>
-        </>
-      )}
+        {pages > 1 && (
+          <>
+            <button
+              type="button"
+              onClick={() => goTo(page - 1)}
+              aria-label="Previous products"
+              className="absolute left-0 top-[38%] z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-foreground text-background shadow-md transition-transform hover:scale-105 md:flex"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => goTo(page + 1)}
+              aria-label="Next products"
+              className="absolute right-0 top-[38%] z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-foreground text-background shadow-md transition-transform hover:scale-105 md:flex"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+          </>
+        )}
+      </div>
 
       {dots && pages > 1 && (
         <div className="mt-8 flex items-center justify-center gap-2">

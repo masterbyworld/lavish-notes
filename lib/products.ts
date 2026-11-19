@@ -207,8 +207,8 @@ export const winningProducts: Product[] = (() => {
   const ranked = [...products]
     .filter((p) => p.inStock)
     .sort((a, b) => discountPercent(b) - discountPercent(a) || b.reviews - a.reviews)
-  // Creed Absolu Aventus is the pinned #1 best seller (hero) per merchandising.
-  const hero = bySlug.get('collection-perfume')
+  // Creed Aventus is the pinned #1 best seller (hero) per merchandising.
+  const hero = bySlug.get('exclusive-perfume-limited-offer')
   if (!hero) return ranked.slice(0, 5)
   const rest = ranked.filter((p) => p.slug !== hero.slug)
   return [hero, ...rest].slice(0, 5)
