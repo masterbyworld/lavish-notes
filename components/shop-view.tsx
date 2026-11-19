@@ -1,11 +1,11 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Search, ChevronDown, Check } from 'lucide-react'
+import { Search, ChevronDown, ChevronRight, Check } from 'lucide-react'
 import { products, collections, getCollectionByKey, type Product } from '@/lib/products'
 import { ProductCard } from '@/components/product-card'
-import { OfferShowcase } from '@/components/offer-showcase'
 import { useLiveStock } from '@/lib/use-live-stock'
 
 const sorts = [
@@ -136,15 +136,23 @@ export function ShopView({
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 md:px-8">
-      {!searchMode && (
-        <div className="mb-8">
-          <OfferShowcase />
-        </div>
-      )}
+    <div className="mx-auto max-w-7xl px-4 pb-16 pt-6 md:px-8 md:pt-10">
+      <nav aria-label="Breadcrumb" className="mb-6 flex items-center justify-center gap-3 text-sm md:text-base">
+        <Link href="/" className="hover:text-muted-foreground">Home</Link>
+        <ChevronRight className="h-3.5 w-3.5" />
+        {collection ? (
+          <>
+            <Link href="/collections" className="hover:text-muted-foreground">Collections</Link>
+            <ChevronRight className="h-3.5 w-3.5" />
+            <span aria-current="page" className="text-muted-foreground">{collection.displayName}</span>
+          </>
+        ) : (
+          <span aria-current="page" className="text-muted-foreground">{searchMode ? 'Search' : 'Catalog'}</span>
+        )}
+      </nav>
 
       <div className="mb-8 text-center">
-        <h1 className="text-4xl text-foreground md:text-5xl">
+        <h1 className="text-balance text-4xl text-foreground md:text-5xl">
           {searchMode
             ? `Found ${visible.length} result${visible.length === 1 ? '' : 's'} for "${query}"`
             : collection
@@ -177,6 +185,29 @@ export function ShopView({
       {/* Collection switcher — always available so shoppers can jump between
           houses easily, and the current collection is clearly badged. */}
       {!searchMode && (
+        <div className="-mx-4 mb-8 overflow-x-auto px-4 [scrollbar-width:none] md:mx-0 md:px-0">
+          <ul className="flex min-w-max items-center gap-6 md:justify-center md:gap-8" aria-label="Collections">
+            {[{ key: '', displayName: 'All Inventory' }, ...collections.slice(0, 12)].map((c) => {
+              const active = c.key ? collection?.key === c.key : !collection
+              return (
+                <li key={c.key || 'all'}>
+                  <Link
+                    href={c.key ? `/shop?c=${c.key}` : '/shop'}
+                    aria-current={active ? 'page' : undefined}
+                    className={`block whitespace-nowrap border-b-2 pb-2 text-base transition-colors md:text-lg ${
+                      active ? 'border-foreground text-foreground' : 'border-transparent text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    {c.displayName}
+                  </Link>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
+      )}
+
+      {!searchMode && (
         <div className="mb-8 flex flex-col items-center gap-3">
           <div ref={switchRef} className="relative w-full max-w-xs">
             <button
@@ -184,11 +215,11 @@ export function ShopView({
               onClick={() => setSwitchOpen((v) => !v)}
               aria-haspopup="listbox"
               aria-expanded={switchOpen}
-              className="flex w-full items-center justify-between gap-3 border border-border bg-background px-5 py-3 text-left text-sm font-medium text-foreground transition-colors hover:border-foreground"
+              className="flex w-full items-center justify-between gap-3 rounded-full border border-border bg-background px-5 py-2.5 text-left text-sm text-foreground transition-colors hover:border-foreground"
             >
-              <span className="flex flex-col">
-                <span className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground">Collection</span>
-                <span className="text-base">{collection ? collection.displayName : 'All Fragrances'}</span>
+              <span>
+                <span className="text-muted-foreground">More houses: </span>
+                {collection ? collection.displayName : 'All Fragrances'}
               </span>
               <ChevronDown className={`h-4 w-4 shrink-0 transition-transform ${switchOpen ? 'rotate-180' : ''}`} />
             </button>
@@ -196,7 +227,7 @@ export function ShopView({
             {switchOpen && (
               <ul
                 role="listbox"
-                className="absolute left-0 right-0 top-full z-20 mt-2 max-h-72 overflow-auto border border-border bg-background py-1 shadow-lg"
+                className="absolute left-0 right-0 top-full z-20 mt-2 max-h-72 overflow-auto rounded-2xl border border-border bg-background py-2 shadow-lg"
               >
                 <li role="option" aria-selected={!collection}>
                   <button
@@ -240,23 +271,21 @@ export function ShopView({
             )}
           </div>
 
-          <p className="text-sm text-muted-foreground">
-            Now viewing{' '}
-            <span className="inline-flex items-center gap-1.5 bg-primary px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary-foreground">
-              {collection ? collection.displayName : 'All Fragrances'}
-            </span>
-          </p>
         </div>
       )}
 
-      <div className="mb-10 flex flex-col gap-4 border-y border-border py-4 md:flex-row md:items-center md:justify-between">
+      <div className="mb-8 flex flex-wrap items-center justify-between gap-4 border-y border-border py-4">
+        <p className="text-sm text-muted-foreground">
+          <span className="font-medium text-foreground tabular-nums">{visible.length}</span> products
+        </p>
+        <div className="flex flex-wrap items-center gap-4 md:gap-6">
         <button
           type="button"
           role="switch"
           aria-checked={showSoldOut}
           onClick={() => setShowSoldOut((v) => !v)}
           disabled={soldOutCount === 0}
-          className="flex items-center gap-3 text-sm font-semibold uppercase tracking-wide text-foreground disabled:opacity-40"
+          className="flex items-center gap-2.5 text-sm text-foreground disabled:opacity-40"
         >
           <span
             className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${
@@ -269,19 +298,23 @@ export function ShopView({
               }`}
             />
           </span>
-          Show Sold Out ({soldOutCount})
+          Show sold out ({soldOutCount})
         </button>
-        <div className="flex flex-wrap items-center gap-3">
-          <select
-            value={sort}
-            onChange={(e) => setSort(e.target.value)}
-            className="border border-border bg-background px-4 py-2 text-sm text-foreground outline-none focus:border-foreground"
-            aria-label="Sort products"
-          >
-            {sorts.map((s) => (
-              <option key={s.key} value={s.key}>{s.label}</option>
-            ))}
-          </select>
+          <label className="flex items-center gap-2 text-sm">
+            <span className="text-muted-foreground">Sort by</span>
+            <span className="relative">
+              <select
+                value={sort}
+                onChange={(e) => setSort(e.target.value)}
+                className="appearance-none rounded-full border border-border bg-background py-2 pl-4 pr-9 text-sm text-foreground outline-none transition-colors hover:border-foreground focus:border-foreground"
+              >
+                {sorts.map((s) => (
+                  <option key={s.key} value={s.key}>{s.label}</option>
+                ))}
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2" />
+            </span>
+          </label>
         </div>
       </div>
 
