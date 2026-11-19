@@ -292,7 +292,7 @@ export function ShopView({
             : 'No fragrances match your filters. Try adjusting your selection.'}
         </p>
       ) : (
-        <div className="grid grid-cols-2 gap-x-2 gap-y-6 sm:grid-cols-3 md:gap-x-4 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="grid grid-cols-2 gap-x-2 gap-y-6 sm:grid-cols-3 md:gap-x-4 lg:grid-cols-4">
           {visible.map((p, i) => (
             <ProductCard key={p.slug} product={p} index={i} />
           ))}
@@ -307,7 +307,7 @@ export function ShopView({
               Similar fragrances shoppers love, based on your search
             </p>
           </div>
-          <div className="grid grid-cols-2 gap-x-2 gap-y-6 sm:grid-cols-3 md:gap-x-4 lg:grid-cols-4 xl:grid-cols-5">
+          <div className="grid grid-cols-2 gap-x-2 gap-y-6 sm:grid-cols-3 md:gap-x-4 lg:grid-cols-4">
             {related.map((p, i) => (
               <ProductCard key={p.slug} product={p} index={i} />
             ))}

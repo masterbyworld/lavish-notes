@@ -12,7 +12,7 @@ export function CuratorsChoice({ defaultBrand = 'Creed' }: { defaultBrand?: stri
   const [brand, setBrand] = useState(defaultBrand)
   const [open, setOpen] = useState(false)
   const boxRef = useRef<HTMLDivElement>(null)
-  const items = useMemo(() => brandProducts(brand).slice(0, 10), [brand])
+  const items = useMemo(() => brandProducts(brand).slice(0, 8), [brand])
   const options = useMemo(() => [...brands].filter((b) => b.count >= 5).sort((a, b) => b.count - a.count), [])
 
   useEffect(() => {
@@ -71,7 +71,7 @@ export function CuratorsChoice({ defaultBrand = 'Creed' }: { defaultBrand?: stri
           </div>
         </header>
 
-        <div className="mt-10 grid grid-cols-2 gap-x-2 gap-y-6 sm:grid-cols-3 md:mt-14 md:gap-x-4 lg:grid-cols-5">
+        <div className="mt-10 grid grid-cols-2 gap-x-2 gap-y-6 sm:grid-cols-3 md:mt-14 md:gap-x-4 lg:grid-cols-4">
           {items.map((p, i) => (
             <ProductCard key={p.slug} product={p} index={i} />
           ))}

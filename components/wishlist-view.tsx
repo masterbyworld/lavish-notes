@@ -23,7 +23,7 @@ export function WishlistView() {
           </Link>
         </div>
       ) : (
-        <div className="mt-10 grid grid-cols-2 gap-x-2 gap-y-6 sm:grid-cols-3 md:gap-x-4 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="mt-10 grid grid-cols-2 gap-x-2 gap-y-6 sm:grid-cols-3 md:gap-x-4 lg:grid-cols-4">
           {wished.map((p, i) => (
             <ProductCard key={p.slug} product={p} index={i} />
           ))}
@@ -33,7 +33,7 @@ export function WishlistView() {
       {compared.length > 0 && (
         <section id="compare" className="mt-20 scroll-mt-28">
           <h2 className="text-center text-3xl">Compare</h2>
-          <div className="mt-8 grid grid-cols-2 gap-x-2 gap-y-6 sm:grid-cols-3 md:gap-x-4 lg:grid-cols-4 xl:grid-cols-5">
+          <div className="mt-8 grid grid-cols-2 gap-x-2 gap-y-6 sm:grid-cols-3 md:gap-x-4 lg:grid-cols-4">
             {compared.map((p, i) => (
               <ProductCard key={p.slug} product={p} index={i} />
             ))}

@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils'
 
 export function ProductCarousel({
   products,
-  itemClassName = 'w-1/2 sm:w-1/3 lg:w-1/5',
+  itemClassName = 'w-1/2 sm:w-1/3 lg:w-1/4',
   label = 'Products',
   dots = true,
 }: {
