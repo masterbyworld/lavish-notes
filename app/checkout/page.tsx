@@ -3,7 +3,19 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowLeft, Gift, Loader2, Lock, RotateCcw, ShieldCheck, ShoppingBag, Truck } from 'lucide-react'
+import {
+  ArrowLeft,
+  Gift,
+  Loader2,
+  Lock,
+  Minus,
+  Plus,
+  RotateCcw,
+  ShieldCheck,
+  ShoppingBag,
+  Trash2,
+  Truck,
+} from 'lucide-react'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { useCart } from '@/lib/cart-context'
@@ -19,7 +31,7 @@ const ASSURANCES = [
 ]
 
 export default function CheckoutPage() {
-  const { items, rawSubtotal, discount, subtotal, freeCount, count } = useCart()
+  const { items, rawSubtotal, discount, subtotal, freeCount, count, setQuantity, removeItem } = useCart()
   const [redirecting, setRedirecting] = useState(false)
   const [checkoutError, setCheckoutError] = useState<string | null>(null)
 
@@ -122,11 +134,44 @@ export default function CheckoutPage() {
                         {item.name}
                       </p>
                       <p className="mt-1 text-xs text-muted-foreground">
-                        {item.size} · Qty {item.quantity}
+                        {item.size} · {formatPrice(item.price)} each
                       </p>
-                      <p className="mt-1 text-xs text-muted-foreground">{formatPrice(item.price)} each</p>
+                      <div className="mt-3 flex items-center gap-3">
+                        <div className="flex items-center rounded-full border border-border">
+                          <button
+                            type="button"
+                            onClick={() => setQuantity(item.id, item.quantity - 1)}
+                            disabled={redirecting}
+                            className="flex h-8 w-8 items-center justify-center text-foreground/70 transition-colors hover:text-foreground disabled:opacity-40"
+                            aria-label={`Decrease quantity of ${item.name}`}
+                          >
+                            <Minus className="h-3.5 w-3.5" />
+                          </button>
+                          <span className="w-6 text-center text-sm tabular-nums" aria-live="polite">
+                            {item.quantity}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setQuantity(item.id, item.quantity + 1)}
+                            disabled={redirecting}
+                            className="flex h-8 w-8 items-center justify-center text-foreground/70 transition-colors hover:text-foreground disabled:opacity-40"
+                            aria-label={`Increase quantity of ${item.name}`}
+                          >
+                            <Plus className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => removeItem(item.id)}
+                          disabled={redirecting}
+                          className="flex h-8 w-8 items-center justify-center text-muted-foreground transition-colors hover:text-sale disabled:opacity-40"
+                          aria-label={`Remove ${item.name}`}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
                     </div>
-                    <span className="text-[15px] text-sale">{formatPrice(item.price * item.quantity)}</span>
+                    <span className="self-start text-[15px] text-sale">{formatPrice(item.price * item.quantity)}</span>
                   </li>
                 ))}
               </ul>
@@ -190,7 +235,7 @@ export default function CheckoutPage() {
                 >
                   {redirecting ? (
                     <>
-                      <Loader2 className="h-5 w-5 animate-spin" /> Redirecting to secure checkout…
+                      <Loader2 className="h-5 w-5 animate-spin" aria-hidden /> Processing…
                     </>
                   ) : (
                     <>
