@@ -11,7 +11,6 @@ import { FeatureStrip } from '@/components/feature-strip'
 import { MobileTabBar } from '@/components/mobile-tab-bar'
 
 const HOUSES = ['MFK', 'Creed', 'Bond No. 9', 'Louis Vuitton', 'Parfums de Marly', 'Tom Ford', 'All Inventory']
-const SCENT_TABS = ['Bond No. 9', 'All Inventory', 'Creed', 'Louis Vuitton', 'MFK', 'Parfums de Marly', 'Tom Ford']
 
 export default function HomePage() {
   return (
@@ -25,10 +24,9 @@ export default function HomePage() {
         tabs={HOUSES}
         defaultTab="Parfums de Marly"
       />
-      <HouseTabs id="scents" title="Explore Iconic Scents" eyebrowFromBrand tabs={SCENT_TABS} defaultTab="Bond No. 9" large />
+      <CuratorsChoice defaultBrand="Bond No. 9" />
       <WinningSpotlight />
       <CuratorsChoice defaultBrand="Creed" />
-      <CuratorsChoice defaultBrand="Bond No. 9" />
       <MostWanted />
       <BrandShowcase brand="Louis Vuitton" title="Louis Vuitton Collection" />
       <section id="reviews">
