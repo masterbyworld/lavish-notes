@@ -22,13 +22,13 @@ export default function HomePage() {
         title="Shop by Iconic Houses"
         subtitle="Browse luxury fragrances categorized by world-renowned perfumery houses. Premium scents delivered right to your door."
         tabs={HOUSES}
-        defaultTab="Parfums de Marly"
+        defaultTab="Louis Vuitton"
       />
       <CuratorsChoice defaultBrand="Bond No. 9" />
       <WinningSpotlight />
       <CuratorsChoice defaultBrand="Creed" />
       <MostWanted />
-      <BrandShowcase brand="Louis Vuitton" title="Louis Vuitton Collection" />
+      <BrandShowcase brand="Parfums de Marly" title="Parfums de Marly Collection" />
       <section id="reviews">
         <HappyCustomers />
       </section>
