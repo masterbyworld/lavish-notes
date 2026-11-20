@@ -16,8 +16,8 @@ export function ProductGallery({ product, thumbsSide }: { product: Product; thum
   const step = (dir: 1 | -1) => setIndex((i) => (i + dir + images.length) % images.length)
 
   return (
-    <div className={cn('flex flex-col gap-4', thumbsSide && 'md:flex-row-reverse')}>
-      <div className="relative aspect-square w-full overflow-hidden bg-card md:flex-1">
+    <div className={cn('flex w-full min-w-0 flex-col gap-4', thumbsSide && 'md:flex-row-reverse')}>
+      <div className="relative aspect-square w-full min-w-0 overflow-hidden bg-card md:flex-1">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={index}
@@ -85,9 +85,9 @@ export function ProductGallery({ product, thumbsSide }: { product: Product; thum
 function SpotlightBody({ product }: { product: Product }) {
   const p = useProductPurchase(product)
   return (
-    <div className="grid items-start gap-8 md:grid-cols-2 md:gap-14">
+    <div className="grid grid-cols-1 items-start gap-8 md:grid-cols-2 md:gap-14">
       <ProductGallery product={product} />
-      <div className="flex flex-col gap-6">
+      <div className="flex min-w-0 flex-col gap-6">
         <div>
           <Link href={`/product/${product.slug}`} className="hover:text-muted-foreground">
             <h3 className="text-3xl font-normal md:text-5xl">{product.name}</h3>
